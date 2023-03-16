@@ -81,7 +81,7 @@ public partial class FormMain : Form
         }
     }
 
-    private void ButtonRemoveDestinationItem_Click(object sender, EventArgs e)
+    private void ButtonRemoveDestinationFolder_Click(object sender, EventArgs e)
     {
         var selectedItem = ListBoxDestination.SelectedItem.ToString();
         ListBoxDestination.Items.RemoveAt(ListBoxDestination.SelectedIndex);
@@ -173,11 +173,6 @@ public partial class FormMain : Form
         if (string.IsNullOrEmpty(selectedItemPath)) return;
 
         ExtractSubDirectories(selectedItemPath);
-    }
-
-    private void ButtonAddPlan_Click(object sender, EventArgs e)
-    {
-
     }
 
     #endregion

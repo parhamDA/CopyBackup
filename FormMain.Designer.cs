@@ -30,349 +30,430 @@
         {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
+            toolStrip1 = new ToolStrip();
+            toolStripLabel1 = new ToolStripLabel();
+            TsbAddSource = new ToolStripButton();
+            TsbDeleteSource = new ToolStripButton();
+            toolStripSeparator1 = new ToolStripSeparator();
+            toolStripLabel2 = new ToolStripLabel();
+            TsbAddDestination = new ToolStripButton();
+            TsbDeleteDestination = new ToolStripButton();
+            toolStripSeparator2 = new ToolStripSeparator();
+            toolStripLabel3 = new ToolStripLabel();
+            TsbAddGroup = new ToolStripButton();
+            TsbDeleteGroup = new ToolStripButton();
+            toolStripSeparator3 = new ToolStripSeparator();
+            TsbRun = new ToolStripButton();
+            statusStrip1 = new StatusStrip();
+            toolStripStatusLabel1 = new ToolStripStatusLabel();
+            ProgressBar = new ToolStripProgressBar();
+            PanelSource = new Panel();
+            ScSource = new SplitContainer();
+            GbSourceList = new GroupBox();
             ListBoxSource = new ListBox();
-            FolderBrowserDialog = new FolderBrowserDialog();
-            ListBoxDestination = new ListBox();
+            groupBox1 = new GroupBox();
             ListView = new ListView();
             ImageList = new ImageList(components);
-            panel1 = new Panel();
-            ButtonAddSourceFolder = new Button();
-            ButtonRemoveSourceFolder = new Button();
-            ToolTip = new ToolTip(components);
-            statusStrip1 = new StatusStrip();
-            panel2 = new Panel();
-            panel3 = new Panel();
-            ButtonAddDestinationFolder = new Button();
-            ButtonRemoveDestinationItem = new Button();
-            panel4 = new Panel();
-            panel5 = new Panel();
-            panel6 = new Panel();
-            panel7 = new Panel();
-            flowLayoutPanel1 = new FlowLayoutPanel();
-            flowLayoutPanel2 = new FlowLayoutPanel();
-            panel8 = new Panel();
-            flowLayoutPanel3 = new FlowLayoutPanel();
-            panel9 = new Panel();
-            ButtonUp = new Button();
-            panel1.SuspendLayout();
-            panel2.SuspendLayout();
-            panel3.SuspendLayout();
-            panel4.SuspendLayout();
-            panel5.SuspendLayout();
-            panel6.SuspendLayout();
-            panel7.SuspendLayout();
-            flowLayoutPanel1.SuspendLayout();
-            flowLayoutPanel2.SuspendLayout();
-            panel8.SuspendLayout();
-            flowLayoutPanel3.SuspendLayout();
-            panel9.SuspendLayout();
+            toolStrip2 = new ToolStrip();
+            TsbUp = new ToolStripButton();
+            PanelDestination = new Panel();
+            ScDestination = new SplitContainer();
+            GbDestinationList = new GroupBox();
+            ListBoxDestination = new ListBox();
+            GbDestinationGroup = new GroupBox();
+            ListBoxDestinationGroup = new ListBox();
+            FolderBrowserDialog = new FolderBrowserDialog();
+            toolStrip1.SuspendLayout();
+            statusStrip1.SuspendLayout();
+            PanelSource.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)ScSource).BeginInit();
+            ScSource.Panel1.SuspendLayout();
+            ScSource.Panel2.SuspendLayout();
+            ScSource.SuspendLayout();
+            GbSourceList.SuspendLayout();
+            groupBox1.SuspendLayout();
+            toolStrip2.SuspendLayout();
+            PanelDestination.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)ScDestination).BeginInit();
+            ScDestination.Panel1.SuspendLayout();
+            ScDestination.Panel2.SuspendLayout();
+            ScDestination.SuspendLayout();
+            GbDestinationList.SuspendLayout();
+            GbDestinationGroup.SuspendLayout();
             SuspendLayout();
+            // 
+            // toolStrip1
+            // 
+            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripLabel1, TsbAddSource, TsbDeleteSource, toolStripSeparator1, toolStripLabel2, TsbAddDestination, TsbDeleteDestination, toolStripSeparator2, toolStripLabel3, TsbAddGroup, TsbDeleteGroup, toolStripSeparator3, TsbRun });
+            toolStrip1.Location = new Point(0, 0);
+            toolStrip1.Name = "toolStrip1";
+            toolStrip1.Size = new Size(866, 25);
+            toolStrip1.TabIndex = 0;
+            toolStrip1.Text = "toolStrip1";
+            // 
+            // toolStripLabel1
+            // 
+            toolStripLabel1.Name = "toolStripLabel1";
+            toolStripLabel1.Size = new Size(70, 22);
+            toolStripLabel1.Text = "Source List: ";
+            // 
+            // TsbAddSource
+            // 
+            TsbAddSource.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            TsbAddSource.Image = (Image)resources.GetObject("TsbAddSource.Image");
+            TsbAddSource.ImageTransparentColor = Color.Magenta;
+            TsbAddSource.Name = "TsbAddSource";
+            TsbAddSource.Size = new Size(23, 22);
+            TsbAddSource.Text = "Add";
+            TsbAddSource.ToolTipText = "Add Source";
+            TsbAddSource.Click += ButtonAddSourceFolder_Click;
+            // 
+            // TsbDeleteSource
+            // 
+            TsbDeleteSource.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            TsbDeleteSource.Image = (Image)resources.GetObject("TsbDeleteSource.Image");
+            TsbDeleteSource.ImageTransparentColor = Color.Magenta;
+            TsbDeleteSource.Name = "TsbDeleteSource";
+            TsbDeleteSource.Size = new Size(23, 22);
+            TsbDeleteSource.Text = "Delete";
+            TsbDeleteSource.ToolTipText = "Delete Source";
+            TsbDeleteSource.Click += ButtonRemoveSourceFolder_Click;
+            // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new Size(6, 25);
+            // 
+            // toolStripLabel2
+            // 
+            toolStripLabel2.Name = "toolStripLabel2";
+            toolStripLabel2.Size = new Size(91, 22);
+            toolStripLabel2.Text = "Destination List:";
+            // 
+            // TsbAddDestination
+            // 
+            TsbAddDestination.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            TsbAddDestination.Image = (Image)resources.GetObject("TsbAddDestination.Image");
+            TsbAddDestination.ImageTransparentColor = Color.Magenta;
+            TsbAddDestination.Name = "TsbAddDestination";
+            TsbAddDestination.Size = new Size(23, 22);
+            TsbAddDestination.Text = "Add Destination";
+            TsbAddDestination.Click += ButtonAddDestinationFolder_Click;
+            // 
+            // TsbDeleteDestination
+            // 
+            TsbDeleteDestination.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            TsbDeleteDestination.Image = (Image)resources.GetObject("TsbDeleteDestination.Image");
+            TsbDeleteDestination.ImageTransparentColor = Color.Magenta;
+            TsbDeleteDestination.Name = "TsbDeleteDestination";
+            TsbDeleteDestination.Size = new Size(23, 22);
+            TsbDeleteDestination.Text = "Delete Destination";
+            TsbDeleteDestination.Click += ButtonRemoveDestinationFolder_Click;
+            // 
+            // toolStripSeparator2
+            // 
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new Size(6, 25);
+            // 
+            // toolStripLabel3
+            // 
+            toolStripLabel3.Name = "toolStripLabel3";
+            toolStripLabel3.Size = new Size(109, 22);
+            toolStripLabel3.Text = "Destination Group: ";
+            // 
+            // TsbAddGroup
+            // 
+            TsbAddGroup.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            TsbAddGroup.Image = (Image)resources.GetObject("TsbAddGroup.Image");
+            TsbAddGroup.ImageTransparentColor = Color.Magenta;
+            TsbAddGroup.Name = "TsbAddGroup";
+            TsbAddGroup.Size = new Size(23, 22);
+            TsbAddGroup.Text = "Add Destination Group";
+            // 
+            // TsbDeleteGroup
+            // 
+            TsbDeleteGroup.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            TsbDeleteGroup.Image = (Image)resources.GetObject("TsbDeleteGroup.Image");
+            TsbDeleteGroup.ImageTransparentColor = Color.Magenta;
+            TsbDeleteGroup.Name = "TsbDeleteGroup";
+            TsbDeleteGroup.Size = new Size(23, 22);
+            TsbDeleteGroup.Text = "toolStripButton2";
+            // 
+            // toolStripSeparator3
+            // 
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new Size(6, 25);
+            // 
+            // TsbRun
+            // 
+            TsbRun.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            TsbRun.Image = (Image)resources.GetObject("TsbRun.Image");
+            TsbRun.ImageTransparentColor = Color.Magenta;
+            TsbRun.Name = "TsbRun";
+            TsbRun.Size = new Size(23, 22);
+            TsbRun.Text = "Run Copy";
+            // 
+            // statusStrip1
+            // 
+            statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, ProgressBar });
+            statusStrip1.Location = new Point(0, 532);
+            statusStrip1.Name = "statusStrip1";
+            statusStrip1.Size = new Size(866, 22);
+            statusStrip1.TabIndex = 1;
+            statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            toolStripStatusLabel1.Size = new Size(669, 17);
+            toolStripStatusLabel1.Spring = true;
+            // 
+            // ProgressBar
+            // 
+            ProgressBar.Name = "ProgressBar";
+            ProgressBar.Size = new Size(180, 16);
+            // 
+            // PanelSource
+            // 
+            PanelSource.Controls.Add(ScSource);
+            PanelSource.Dock = DockStyle.Left;
+            PanelSource.Location = new Point(0, 25);
+            PanelSource.Name = "PanelSource";
+            PanelSource.Size = new Size(667, 507);
+            PanelSource.TabIndex = 2;
+            // 
+            // ScSource
+            // 
+            ScSource.Dock = DockStyle.Fill;
+            ScSource.Location = new Point(0, 0);
+            ScSource.Name = "ScSource";
+            // 
+            // ScSource.Panel1
+            // 
+            ScSource.Panel1.Controls.Add(GbSourceList);
+            // 
+            // ScSource.Panel2
+            // 
+            ScSource.Panel2.Controls.Add(groupBox1);
+            ScSource.Size = new Size(667, 507);
+            ScSource.SplitterDistance = 222;
+            ScSource.TabIndex = 0;
+            // 
+            // GbSourceList
+            // 
+            GbSourceList.Controls.Add(ListBoxSource);
+            GbSourceList.Dock = DockStyle.Fill;
+            GbSourceList.Location = new Point(0, 0);
+            GbSourceList.Name = "GbSourceList";
+            GbSourceList.Size = new Size(222, 507);
+            GbSourceList.TabIndex = 0;
+            GbSourceList.TabStop = false;
+            GbSourceList.Text = "Source List";
             // 
             // ListBoxSource
             // 
             ListBoxSource.Dock = DockStyle.Fill;
             ListBoxSource.FormattingEnabled = true;
             ListBoxSource.ItemHeight = 15;
-            ListBoxSource.Location = new Point(0, 0);
+            ListBoxSource.Location = new Point(3, 19);
             ListBoxSource.Name = "ListBoxSource";
-            ListBoxSource.Size = new Size(200, 506);
-            ListBoxSource.TabIndex = 1;
-            ListBoxSource.SelectedIndexChanged += ListBoxSource_SelectedIndexChanged;
+            ListBoxSource.Size = new Size(216, 485);
+            ListBoxSource.TabIndex = 0;
             // 
-            // ListBoxDestination
+            // groupBox1
             // 
-            ListBoxDestination.Dock = DockStyle.Fill;
-            ListBoxDestination.FormattingEnabled = true;
-            ListBoxDestination.ItemHeight = 15;
-            ListBoxDestination.Location = new Point(0, 0);
-            ListBoxDestination.Name = "ListBoxDestination";
-            ListBoxDestination.SelectionMode = SelectionMode.MultiSimple;
-            ListBoxDestination.Size = new Size(200, 506);
-            ListBoxDestination.TabIndex = 5;
+            groupBox1.Controls.Add(ListView);
+            groupBox1.Controls.Add(toolStrip2);
+            groupBox1.Dock = DockStyle.Fill;
+            groupBox1.Location = new Point(0, 0);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(441, 507);
+            groupBox1.TabIndex = 0;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Explorer";
             // 
             // ListView
             // 
             ListView.Dock = DockStyle.Fill;
             ListView.LargeImageList = ImageList;
-            ListView.Location = new Point(0, 0);
+            ListView.Location = new Point(3, 44);
             ListView.Name = "ListView";
-            ListView.Size = new Size(400, 506);
-            ListView.TabIndex = 9;
+            ListView.Size = new Size(435, 460);
+            ListView.TabIndex = 1;
             ListView.UseCompatibleStateImageBehavior = false;
-            ListView.MouseDoubleClick += ListView_MouseDoubleClick;
             // 
             // ImageList
             // 
             ImageList.ColorDepth = ColorDepth.Depth8Bit;
             ImageList.ImageStream = (ImageListStreamer)resources.GetObject("ImageList.ImageStream");
             ImageList.TransparentColor = Color.Transparent;
-            ImageList.Images.SetKeyName(0, "Folder-64.ico");
-            ImageList.Images.SetKeyName(1, "File-64.ico");
-            ImageList.Images.SetKeyName(2, "Add.png");
-            ImageList.Images.SetKeyName(3, "Remove.png");
-            ImageList.Images.SetKeyName(4, "Up.ico");
+            ImageList.Images.SetKeyName(0, "Up.png");
+            ImageList.Images.SetKeyName(1, "File.png");
+            ImageList.Images.SetKeyName(2, "Folder.png");
             // 
-            // panel1
+            // toolStrip2
             // 
-            panel1.Controls.Add(panel8);
-            panel1.Controls.Add(panel3);
-            panel1.Controls.Add(panel2);
-            panel1.Controls.Add(statusStrip1);
-            panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(0, 0);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(800, 554);
-            panel1.TabIndex = 17;
+            toolStrip2.Items.AddRange(new ToolStripItem[] { TsbUp });
+            toolStrip2.Location = new Point(3, 19);
+            toolStrip2.Name = "toolStrip2";
+            toolStrip2.Size = new Size(435, 25);
+            toolStrip2.TabIndex = 0;
+            toolStrip2.Text = "toolStrip2";
             // 
-            // ButtonAddSourceFolder
+            // TsbUp
             // 
-            ButtonAddSourceFolder.BackgroundImageLayout = ImageLayout.Center;
-            ButtonAddSourceFolder.FlatAppearance.BorderColor = SystemColors.ControlDark;
-            ButtonAddSourceFolder.FlatAppearance.MouseDownBackColor = SystemColors.Control;
-            ButtonAddSourceFolder.FlatAppearance.MouseOverBackColor = SystemColors.Control;
-            ButtonAddSourceFolder.FlatStyle = FlatStyle.Flat;
-            ButtonAddSourceFolder.ImageIndex = 2;
-            ButtonAddSourceFolder.ImageList = ImageList;
-            ButtonAddSourceFolder.Location = new Point(3, 3);
-            ButtonAddSourceFolder.Name = "ButtonAddSourceFolder";
-            ButtonAddSourceFolder.Size = new Size(24, 23);
-            ButtonAddSourceFolder.TabIndex = 10;
-            ToolTip.SetToolTip(ButtonAddSourceFolder, "Add source folder");
-            ButtonAddSourceFolder.UseVisualStyleBackColor = true;
-            ButtonAddSourceFolder.Click += ButtonAddSourceFolder_Click;
+            TsbUp.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            TsbUp.Image = (Image)resources.GetObject("TsbUp.Image");
+            TsbUp.ImageTransparentColor = Color.Magenta;
+            TsbUp.Name = "TsbUp";
+            TsbUp.Size = new Size(23, 22);
+            TsbUp.Text = "Up";
+            TsbUp.Click += ButtonUp_Click;
             // 
-            // ButtonRemoveSourceFolder
+            // PanelDestination
             // 
-            ButtonRemoveSourceFolder.BackgroundImageLayout = ImageLayout.Center;
-            ButtonRemoveSourceFolder.FlatAppearance.BorderColor = SystemColors.ControlDark;
-            ButtonRemoveSourceFolder.FlatAppearance.MouseDownBackColor = SystemColors.Control;
-            ButtonRemoveSourceFolder.FlatAppearance.MouseOverBackColor = SystemColors.Control;
-            ButtonRemoveSourceFolder.FlatStyle = FlatStyle.Flat;
-            ButtonRemoveSourceFolder.ImageIndex = 3;
-            ButtonRemoveSourceFolder.ImageList = ImageList;
-            ButtonRemoveSourceFolder.Location = new Point(33, 3);
-            ButtonRemoveSourceFolder.Name = "ButtonRemoveSourceFolder";
-            ButtonRemoveSourceFolder.Size = new Size(24, 26);
-            ButtonRemoveSourceFolder.TabIndex = 11;
-            ToolTip.SetToolTip(ButtonRemoveSourceFolder, "Remove source folder");
-            ButtonRemoveSourceFolder.UseVisualStyleBackColor = true;
-            ButtonRemoveSourceFolder.Click += ButtonRemoveSourceFolder_Click;
+            PanelDestination.Controls.Add(ScDestination);
+            PanelDestination.Dock = DockStyle.Right;
+            PanelDestination.Location = new Point(666, 25);
+            PanelDestination.Name = "PanelDestination";
+            PanelDestination.Size = new Size(200, 507);
+            PanelDestination.TabIndex = 0;
             // 
-            // statusStrip1
+            // ScDestination
             // 
-            statusStrip1.Location = new Point(0, 532);
-            statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new Size(800, 22);
-            statusStrip1.TabIndex = 12;
-            statusStrip1.Text = "statusStrip1";
+            ScDestination.Dock = DockStyle.Fill;
+            ScDestination.Location = new Point(0, 0);
+            ScDestination.Name = "ScDestination";
+            ScDestination.Orientation = Orientation.Horizontal;
             // 
-            // panel2
+            // ScDestination.Panel1
             // 
-            panel2.Controls.Add(panel7);
-            panel2.Controls.Add(panel6);
-            panel2.Dock = DockStyle.Left;
-            panel2.Location = new Point(0, 0);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(200, 532);
-            panel2.TabIndex = 13;
+            ScDestination.Panel1.Controls.Add(GbDestinationList);
             // 
-            // panel3
+            // ScDestination.Panel2
             // 
-            panel3.Controls.Add(panel5);
-            panel3.Controls.Add(panel4);
-            panel3.Dock = DockStyle.Right;
-            panel3.Location = new Point(600, 0);
-            panel3.Name = "panel3";
-            panel3.Size = new Size(200, 532);
-            panel3.TabIndex = 14;
+            ScDestination.Panel2.Controls.Add(GbDestinationGroup);
+            ScDestination.Size = new Size(200, 507);
+            ScDestination.SplitterDistance = 254;
+            ScDestination.TabIndex = 0;
             // 
-            // ButtonAddDestinationFolder
+            // GbDestinationList
             // 
-            ButtonAddDestinationFolder.BackgroundImageLayout = ImageLayout.Center;
-            ButtonAddDestinationFolder.FlatAppearance.BorderColor = SystemColors.ControlDark;
-            ButtonAddDestinationFolder.FlatAppearance.MouseDownBackColor = SystemColors.Control;
-            ButtonAddDestinationFolder.FlatAppearance.MouseOverBackColor = SystemColors.Control;
-            ButtonAddDestinationFolder.FlatStyle = FlatStyle.Flat;
-            ButtonAddDestinationFolder.ImageIndex = 2;
-            ButtonAddDestinationFolder.ImageList = ImageList;
-            ButtonAddDestinationFolder.Location = new Point(3, 3);
-            ButtonAddDestinationFolder.Name = "ButtonAddDestinationFolder";
-            ButtonAddDestinationFolder.Size = new Size(24, 23);
-            ButtonAddDestinationFolder.TabIndex = 12;
-            ToolTip.SetToolTip(ButtonAddDestinationFolder, "Add destination folder");
-            ButtonAddDestinationFolder.UseVisualStyleBackColor = true;
-            ButtonAddDestinationFolder.Click += ButtonAddDestinationFolder_Click;
+            GbDestinationList.Controls.Add(ListBoxDestination);
+            GbDestinationList.Dock = DockStyle.Fill;
+            GbDestinationList.Location = new Point(0, 0);
+            GbDestinationList.Name = "GbDestinationList";
+            GbDestinationList.Size = new Size(200, 254);
+            GbDestinationList.TabIndex = 0;
+            GbDestinationList.TabStop = false;
+            GbDestinationList.Text = "Destination List";
             // 
-            // ButtonRemoveDestinationItem
+            // ListBoxDestination
             // 
-            ButtonRemoveDestinationItem.BackgroundImageLayout = ImageLayout.Center;
-            ButtonRemoveDestinationItem.FlatAppearance.BorderColor = SystemColors.ControlDark;
-            ButtonRemoveDestinationItem.FlatAppearance.MouseDownBackColor = SystemColors.Control;
-            ButtonRemoveDestinationItem.FlatAppearance.MouseOverBackColor = SystemColors.Control;
-            ButtonRemoveDestinationItem.FlatStyle = FlatStyle.Flat;
-            ButtonRemoveDestinationItem.ImageIndex = 3;
-            ButtonRemoveDestinationItem.ImageList = ImageList;
-            ButtonRemoveDestinationItem.Location = new Point(33, 3);
-            ButtonRemoveDestinationItem.Name = "ButtonRemoveDestinationItem";
-            ButtonRemoveDestinationItem.Size = new Size(24, 23);
-            ButtonRemoveDestinationItem.TabIndex = 13;
-            ToolTip.SetToolTip(ButtonRemoveDestinationItem, "Remove destination folder");
-            ButtonRemoveDestinationItem.UseVisualStyleBackColor = true;
-            ButtonRemoveDestinationItem.Click += ButtonRemoveDestinationItem_Click;
+            ListBoxDestination.Dock = DockStyle.Fill;
+            ListBoxDestination.FormattingEnabled = true;
+            ListBoxDestination.ItemHeight = 15;
+            ListBoxDestination.Location = new Point(3, 19);
+            ListBoxDestination.Name = "ListBoxDestination";
+            ListBoxDestination.Size = new Size(194, 232);
+            ListBoxDestination.TabIndex = 0;
             // 
-            // panel4
+            // GbDestinationGroup
             // 
-            panel4.Controls.Add(flowLayoutPanel1);
-            panel4.Dock = DockStyle.Top;
-            panel4.Location = new Point(0, 0);
-            panel4.Name = "panel4";
-            panel4.Size = new Size(200, 26);
-            panel4.TabIndex = 0;
+            GbDestinationGroup.Controls.Add(ListBoxDestinationGroup);
+            GbDestinationGroup.Dock = DockStyle.Fill;
+            GbDestinationGroup.Location = new Point(0, 0);
+            GbDestinationGroup.Name = "GbDestinationGroup";
+            GbDestinationGroup.Size = new Size(200, 249);
+            GbDestinationGroup.TabIndex = 0;
+            GbDestinationGroup.TabStop = false;
+            GbDestinationGroup.Text = "Destination Group";
             // 
-            // panel5
+            // ListBoxDestinationGroup
             // 
-            panel5.Controls.Add(ListBoxDestination);
-            panel5.Dock = DockStyle.Fill;
-            panel5.Location = new Point(0, 26);
-            panel5.Name = "panel5";
-            panel5.Size = new Size(200, 506);
-            panel5.TabIndex = 1;
-            // 
-            // panel6
-            // 
-            panel6.Controls.Add(flowLayoutPanel2);
-            panel6.Dock = DockStyle.Top;
-            panel6.Location = new Point(0, 0);
-            panel6.Name = "panel6";
-            panel6.Size = new Size(200, 26);
-            panel6.TabIndex = 0;
-            // 
-            // panel7
-            // 
-            panel7.Controls.Add(ListBoxSource);
-            panel7.Dock = DockStyle.Fill;
-            panel7.Location = new Point(0, 26);
-            panel7.Name = "panel7";
-            panel7.Size = new Size(200, 506);
-            panel7.TabIndex = 1;
-            // 
-            // flowLayoutPanel1
-            // 
-            flowLayoutPanel1.Controls.Add(ButtonAddDestinationFolder);
-            flowLayoutPanel1.Controls.Add(ButtonRemoveDestinationItem);
-            flowLayoutPanel1.Dock = DockStyle.Fill;
-            flowLayoutPanel1.Location = new Point(0, 0);
-            flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(200, 26);
-            flowLayoutPanel1.TabIndex = 15;
-            // 
-            // flowLayoutPanel2
-            // 
-            flowLayoutPanel2.Controls.Add(ButtonAddSourceFolder);
-            flowLayoutPanel2.Controls.Add(ButtonRemoveSourceFolder);
-            flowLayoutPanel2.Dock = DockStyle.Fill;
-            flowLayoutPanel2.Location = new Point(0, 0);
-            flowLayoutPanel2.Name = "flowLayoutPanel2";
-            flowLayoutPanel2.Size = new Size(200, 26);
-            flowLayoutPanel2.TabIndex = 15;
-            // 
-            // panel8
-            // 
-            panel8.Controls.Add(panel9);
-            panel8.Controls.Add(flowLayoutPanel3);
-            panel8.Dock = DockStyle.Fill;
-            panel8.Location = new Point(200, 0);
-            panel8.Name = "panel8";
-            panel8.Size = new Size(400, 532);
-            panel8.TabIndex = 15;
-            // 
-            // flowLayoutPanel3
-            // 
-            flowLayoutPanel3.Controls.Add(ButtonUp);
-            flowLayoutPanel3.Dock = DockStyle.Top;
-            flowLayoutPanel3.Location = new Point(0, 0);
-            flowLayoutPanel3.Name = "flowLayoutPanel3";
-            flowLayoutPanel3.Size = new Size(400, 26);
-            flowLayoutPanel3.TabIndex = 0;
-            // 
-            // panel9
-            // 
-            panel9.Controls.Add(ListView);
-            panel9.Dock = DockStyle.Fill;
-            panel9.Location = new Point(0, 26);
-            panel9.Name = "panel9";
-            panel9.Size = new Size(400, 506);
-            panel9.TabIndex = 16;
-            // 
-            // ButtonUp
-            // 
-            ButtonUp.BackgroundImageLayout = ImageLayout.Center;
-            ButtonUp.FlatAppearance.BorderColor = SystemColors.ControlDark;
-            ButtonUp.FlatAppearance.MouseDownBackColor = SystemColors.Control;
-            ButtonUp.FlatAppearance.MouseOverBackColor = SystemColors.Control;
-            ButtonUp.FlatStyle = FlatStyle.Flat;
-            ButtonUp.ImageIndex = 4;
-            ButtonUp.ImageList = ImageList;
-            ButtonUp.Location = new Point(3, 3);
-            ButtonUp.Name = "ButtonUp";
-            ButtonUp.Size = new Size(24, 23);
-            ButtonUp.TabIndex = 12;
-            ToolTip.SetToolTip(ButtonUp, "Up");
-            ButtonUp.UseVisualStyleBackColor = true;
-            ButtonUp.Click += ButtonUp_Click;
+            ListBoxDestinationGroup.Dock = DockStyle.Fill;
+            ListBoxDestinationGroup.FormattingEnabled = true;
+            ListBoxDestinationGroup.ItemHeight = 15;
+            ListBoxDestinationGroup.Location = new Point(3, 19);
+            ListBoxDestinationGroup.Name = "ListBoxDestinationGroup";
+            ListBoxDestinationGroup.Size = new Size(194, 227);
+            ListBoxDestinationGroup.TabIndex = 0;
             // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 554);
-            Controls.Add(panel1);
+            ClientSize = new Size(866, 554);
+            Controls.Add(PanelDestination);
+            Controls.Add(PanelSource);
+            Controls.Add(statusStrip1);
+            Controls.Add(toolStrip1);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             Name = "FormMain";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Copy Backup";
             Load += FormMain_Load;
-            panel1.ResumeLayout(false);
-            panel1.PerformLayout();
-            panel2.ResumeLayout(false);
-            panel3.ResumeLayout(false);
-            panel4.ResumeLayout(false);
-            panel5.ResumeLayout(false);
-            panel6.ResumeLayout(false);
-            panel7.ResumeLayout(false);
-            flowLayoutPanel1.ResumeLayout(false);
-            flowLayoutPanel2.ResumeLayout(false);
-            panel8.ResumeLayout(false);
-            flowLayoutPanel3.ResumeLayout(false);
-            panel9.ResumeLayout(false);
+            toolStrip1.ResumeLayout(false);
+            toolStrip1.PerformLayout();
+            statusStrip1.ResumeLayout(false);
+            statusStrip1.PerformLayout();
+            PanelSource.ResumeLayout(false);
+            ScSource.Panel1.ResumeLayout(false);
+            ScSource.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)ScSource).EndInit();
+            ScSource.ResumeLayout(false);
+            GbSourceList.ResumeLayout(false);
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
+            toolStrip2.ResumeLayout(false);
+            toolStrip2.PerformLayout();
+            PanelDestination.ResumeLayout(false);
+            ScDestination.Panel1.ResumeLayout(false);
+            ScDestination.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)ScDestination).EndInit();
+            ScDestination.ResumeLayout(false);
+            GbDestinationList.ResumeLayout(false);
+            GbDestinationGroup.ResumeLayout(false);
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
-        private ListBox ListBoxSource;
-        private FolderBrowserDialog FolderBrowserDialog;
-        private ListBox ListBoxDestination;
-        private ListView ListView;
-        private ImageList ImageList;
-        private Panel panel1;
-        private Button ButtonAddSourceFolder;
-        private ToolTip ToolTip;
-        private Button ButtonRemoveSourceFolder;
-        private Panel panel8;
-        private Panel panel9;
-        private FlowLayoutPanel flowLayoutPanel3;
-        private Button ButtonUp;
-        private Panel panel3;
-        private Panel panel5;
-        private Panel panel4;
-        private FlowLayoutPanel flowLayoutPanel1;
-        private Button ButtonAddDestinationFolder;
-        private Button ButtonRemoveDestinationItem;
-        private Panel panel2;
-        private Panel panel7;
-        private Panel panel6;
-        private FlowLayoutPanel flowLayoutPanel2;
+
+        private ToolStrip toolStrip1;
         private StatusStrip statusStrip1;
+        private Panel PanelSource;
+        private SplitContainer ScSource;
+        private Panel PanelDestination;
+        private SplitContainer ScDestination;
+        private GroupBox GbDestinationList;
+        private ListBox ListBoxDestination;
+        private ToolStripLabel toolStripLabel1;
+        private ToolStripButton TsbAddSource;
+        private ToolStripButton TsbDeleteSource;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripLabel toolStripLabel2;
+        private ToolStripButton TsbAddDestination;
+        private ToolStripButton TsbDeleteDestination;
+        private ToolStripSeparator toolStripSeparator2;
+        private ToolStripButton TsbRun;
+        private ToolStripStatusLabel toolStripStatusLabel1;
+        private GroupBox GbSourceList;
+        private ListBox ListBoxSource;
+        private GroupBox groupBox1;
+        private ListView ListView;
+        private ToolStrip toolStrip2;
+        private ToolStripButton TsbUp;
+        private GroupBox GbDestinationGroup;
+        private ListBox ListBoxDestinationGroup;
+        private ImageList ImageList;
+        private FolderBrowserDialog FolderBrowserDialog;
+        private ToolStripProgressBar ProgressBar;
+        private ToolStripLabel toolStripLabel3;
+        private ToolStripButton TsbAddGroup;
+        private ToolStripButton TsbDeleteGroup;
+        private ToolStripSeparator toolStripSeparator3;
     }
 }
