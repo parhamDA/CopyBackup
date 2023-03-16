@@ -44,9 +44,6 @@
             TsbDeleteGroup = new ToolStripButton();
             toolStripSeparator3 = new ToolStripSeparator();
             TsbRun = new ToolStripButton();
-            statusStrip1 = new StatusStrip();
-            toolStripStatusLabel1 = new ToolStripStatusLabel();
-            ProgressBar = new ToolStripProgressBar();
             PanelSource = new Panel();
             ScSource = new SplitContainer();
             GbSourceList = new GroupBox();
@@ -64,7 +61,6 @@
             ListBoxDestinationGroup = new ListBox();
             FolderBrowserDialog = new FolderBrowserDialog();
             toolStrip1.SuspendLayout();
-            statusStrip1.SuspendLayout();
             PanelSource.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)ScSource).BeginInit();
             ScSource.Panel1.SuspendLayout();
@@ -192,26 +188,7 @@
             TsbRun.Name = "TsbRun";
             TsbRun.Size = new Size(23, 22);
             TsbRun.Text = "Run Copy";
-            // 
-            // statusStrip1
-            // 
-            statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, ProgressBar });
-            statusStrip1.Location = new Point(0, 532);
-            statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new Size(866, 22);
-            statusStrip1.TabIndex = 1;
-            statusStrip1.Text = "statusStrip1";
-            // 
-            // toolStripStatusLabel1
-            // 
-            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            toolStripStatusLabel1.Size = new Size(669, 17);
-            toolStripStatusLabel1.Spring = true;
-            // 
-            // ProgressBar
-            // 
-            ProgressBar.Name = "ProgressBar";
-            ProgressBar.Size = new Size(180, 16);
+            TsbRun.Click += ButtonRunCopy_Click;
             // 
             // PanelSource
             // 
@@ -219,7 +196,7 @@
             PanelSource.Dock = DockStyle.Left;
             PanelSource.Location = new Point(0, 25);
             PanelSource.Name = "PanelSource";
-            PanelSource.Size = new Size(667, 507);
+            PanelSource.Size = new Size(667, 529);
             PanelSource.TabIndex = 2;
             // 
             // ScSource
@@ -235,7 +212,7 @@
             // ScSource.Panel2
             // 
             ScSource.Panel2.Controls.Add(groupBox1);
-            ScSource.Size = new Size(667, 507);
+            ScSource.Size = new Size(667, 529);
             ScSource.SplitterDistance = 222;
             ScSource.TabIndex = 0;
             // 
@@ -245,7 +222,7 @@
             GbSourceList.Dock = DockStyle.Fill;
             GbSourceList.Location = new Point(0, 0);
             GbSourceList.Name = "GbSourceList";
-            GbSourceList.Size = new Size(222, 507);
+            GbSourceList.Size = new Size(222, 529);
             GbSourceList.TabIndex = 0;
             GbSourceList.TabStop = false;
             GbSourceList.Text = "Source List";
@@ -257,8 +234,9 @@
             ListBoxSource.ItemHeight = 15;
             ListBoxSource.Location = new Point(3, 19);
             ListBoxSource.Name = "ListBoxSource";
-            ListBoxSource.Size = new Size(216, 485);
+            ListBoxSource.Size = new Size(216, 507);
             ListBoxSource.TabIndex = 0;
+            ListBoxSource.Click += ListBoxSource_SelectedIndexChanged;
             // 
             // groupBox1
             // 
@@ -267,7 +245,7 @@
             groupBox1.Dock = DockStyle.Fill;
             groupBox1.Location = new Point(0, 0);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(441, 507);
+            groupBox1.Size = new Size(441, 529);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "Explorer";
@@ -278,9 +256,10 @@
             ListView.LargeImageList = ImageList;
             ListView.Location = new Point(3, 44);
             ListView.Name = "ListView";
-            ListView.Size = new Size(435, 460);
+            ListView.Size = new Size(435, 482);
             ListView.TabIndex = 1;
             ListView.UseCompatibleStateImageBehavior = false;
+            ListView.MouseDoubleClick += ListView_MouseDoubleClick;
             // 
             // ImageList
             // 
@@ -316,7 +295,7 @@
             PanelDestination.Dock = DockStyle.Right;
             PanelDestination.Location = new Point(666, 25);
             PanelDestination.Name = "PanelDestination";
-            PanelDestination.Size = new Size(200, 507);
+            PanelDestination.Size = new Size(200, 529);
             PanelDestination.TabIndex = 0;
             // 
             // ScDestination
@@ -333,8 +312,8 @@
             // ScDestination.Panel2
             // 
             ScDestination.Panel2.Controls.Add(GbDestinationGroup);
-            ScDestination.Size = new Size(200, 507);
-            ScDestination.SplitterDistance = 254;
+            ScDestination.Size = new Size(200, 529);
+            ScDestination.SplitterDistance = 265;
             ScDestination.TabIndex = 0;
             // 
             // GbDestinationList
@@ -343,7 +322,7 @@
             GbDestinationList.Dock = DockStyle.Fill;
             GbDestinationList.Location = new Point(0, 0);
             GbDestinationList.Name = "GbDestinationList";
-            GbDestinationList.Size = new Size(200, 254);
+            GbDestinationList.Size = new Size(200, 265);
             GbDestinationList.TabIndex = 0;
             GbDestinationList.TabStop = false;
             GbDestinationList.Text = "Destination List";
@@ -355,7 +334,7 @@
             ListBoxDestination.ItemHeight = 15;
             ListBoxDestination.Location = new Point(3, 19);
             ListBoxDestination.Name = "ListBoxDestination";
-            ListBoxDestination.Size = new Size(194, 232);
+            ListBoxDestination.Size = new Size(194, 243);
             ListBoxDestination.TabIndex = 0;
             // 
             // GbDestinationGroup
@@ -364,7 +343,7 @@
             GbDestinationGroup.Dock = DockStyle.Fill;
             GbDestinationGroup.Location = new Point(0, 0);
             GbDestinationGroup.Name = "GbDestinationGroup";
-            GbDestinationGroup.Size = new Size(200, 249);
+            GbDestinationGroup.Size = new Size(200, 260);
             GbDestinationGroup.TabIndex = 0;
             GbDestinationGroup.TabStop = false;
             GbDestinationGroup.Text = "Destination Group";
@@ -376,7 +355,7 @@
             ListBoxDestinationGroup.ItemHeight = 15;
             ListBoxDestinationGroup.Location = new Point(3, 19);
             ListBoxDestinationGroup.Name = "ListBoxDestinationGroup";
-            ListBoxDestinationGroup.Size = new Size(194, 227);
+            ListBoxDestinationGroup.Size = new Size(194, 238);
             ListBoxDestinationGroup.TabIndex = 0;
             // 
             // FormMain
@@ -386,7 +365,6 @@
             ClientSize = new Size(866, 554);
             Controls.Add(PanelDestination);
             Controls.Add(PanelSource);
-            Controls.Add(statusStrip1);
             Controls.Add(toolStrip1);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -397,8 +375,6 @@
             Load += FormMain_Load;
             toolStrip1.ResumeLayout(false);
             toolStrip1.PerformLayout();
-            statusStrip1.ResumeLayout(false);
-            statusStrip1.PerformLayout();
             PanelSource.ResumeLayout(false);
             ScSource.Panel1.ResumeLayout(false);
             ScSource.Panel2.ResumeLayout(false);
@@ -423,7 +399,6 @@
         #endregion
 
         private ToolStrip toolStrip1;
-        private StatusStrip statusStrip1;
         private Panel PanelSource;
         private SplitContainer ScSource;
         private Panel PanelDestination;
@@ -439,7 +414,6 @@
         private ToolStripButton TsbDeleteDestination;
         private ToolStripSeparator toolStripSeparator2;
         private ToolStripButton TsbRun;
-        private ToolStripStatusLabel toolStripStatusLabel1;
         private GroupBox GbSourceList;
         private ListBox ListBoxSource;
         private GroupBox groupBox1;
@@ -450,7 +424,6 @@
         private ListBox ListBoxDestinationGroup;
         private ImageList ImageList;
         private FolderBrowserDialog FolderBrowserDialog;
-        private ToolStripProgressBar ProgressBar;
         private ToolStripLabel toolStripLabel3;
         private ToolStripButton TsbAddGroup;
         private ToolStripButton TsbDeleteGroup;

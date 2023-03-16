@@ -28,15 +28,16 @@ public partial class FormMain : Form
         var folderDialog = FolderBrowserDialog.ShowDialog();
         if (folderDialog != DialogResult.OK) return;
 
+        var frmGetName = new FormGetName();
+        var frmNameDialogResult = frmGetName.ShowDialog();
+        if (frmNameDialogResult != DialogResult.OK) return;
+
         try
         {
-            var selectedFolderName = Path.GetFileName(FolderBrowserDialog.SelectedPath);
-            if (string.IsNullOrEmpty(selectedFolderName)) return;
-
-            ListBoxSource.Items.Add(selectedFolderName);
+            ListBoxSource.Items.Add(frmGetName.ItemName);
             _database.AddSource(new SourceModel
             {
-                Name = selectedFolderName,
+                Name = frmGetName.ItemName,
                 Path = FolderBrowserDialog.SelectedPath
             });
         }
@@ -193,7 +194,7 @@ public partial class FormMain : Form
                 {
                     Text = directory.Name,
                     Tag = directory.FullName,
-                    ImageIndex = 0
+                    ImageIndex = 2
                 });
             }
 
