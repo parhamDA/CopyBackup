@@ -7,140 +7,65 @@ namespace CopyBackup.Data;
 public class Database
 {
     private readonly ConnectionString _connectionString;
+
     public Database()
     {
         _connectionString = new ConnectionString
         {
-            Filename = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "database.db")
+            Filename = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CopyBackupDatabase.db")
         };
     }
 
     public IEnumerable<string> GetBackups()
     {
         using var db = new LiteDatabase(_connectionString);
-        
-        var backups = new List<string>();
-        backups.AddRange(
-            db.GetCollection<BackupModel>("Backups")
-            .FindAll().OrderBy(x => x.Name).Select(g => g.Name));
-
-        return backups;
+        return db.GetCollection<BackupModel>("‌BackupPlans")
+            .FindAll()
+            .OrderBy(x => x.Name)
+            .Select(x => x.Name);
     }
 
-    public IEnumerable<string> GetDestinationsName()
-    {
-        var destinationNames = new List<string>();
-
-        using (var db = new LiteDatabase(_connectionString))
-        {
-            destinationNames.AddRange(
-                db.GetCollection<DestinationModel>("DestinationGroup")
-                .FindAll().OrderBy(x => x.Name).Select(x => x.Name));
-        }
-
-        return destinationNames;
-    }
-
-    public IEnumerable<string> GetPlansName()
-    {
-        var planNames = new List<string>();
-
-        using (var db = new LiteDatabase(_connectionString))
-        {
-            planNames.AddRange(db.GetCollection<CopyPlanModel>("PlansGroup")
-                .FindAll().OrderBy(x => x.PlanName).Select(x => x.PlanName));
-        }
-
-        return planNames;
-    }
-
-    public string GetSourcePath(string sourceName)
+    public BackupModel GetBackup(string backupName)
     {
         using var db = new LiteDatabase(_connectionString);
-        return db.GetCollection<SourceModel>("SourceGroup").FindOne(x => x.Name == sourceName).Path;
+        return db.GetCollection<BackupModel>("BackupPlans")
+            .FindOne(x => x.Name == backupName);
     }
 
-    public IEnumerable<string?> GetDestinationsPath(IEnumerable<string?> destinationsName)
-    {
-        var paths = new List<string?>();
-
-        using var db = new LiteDatabase(_connectionString);
-        paths.AddRange(db.GetCollection<DestinationModel>("DestinationGroup")
-            .Query()
-            .Where(x => destinationsName.Contains(x.Name))
-            .Select(x => x.Path).ToList());
-
-        return paths;
-    }
-
-    public IEnumerable<string> GetPlanDestinations(string planName)
-    {
-        var planDestinations = new List<string>();
-
-        using var db = new LiteDatabase(_connectionString);
-        planDestinations.AddRange(db.GetCollection<CopyPlanModel>("PlanGroup")
-            .Query()
-            .Where(x => planName == x.PlanName)
-            .Select(x => x.PlanName).ToList());
-
-        return planDestinations;
-    }
-
-    public void AddSource(SourceModel source)
+    public void AddBackup(BackupModel backup)
     {
         using var db = new LiteDatabase(_connectionString);
 
-        if (db.GetCollection<SourceModel>("SourceGroup").Exists(g => g.Name.ToLower() == source.Name.ToLower()))
+        if (db.GetCollection<BackupModel>("BackupPlans").Exists(x => x.Name.ToLower() == backup.Name.ToLower()))
             throw new Exception("Source name is already exist!");
 
-        db.GetCollection<SourceModel>("SourceGroup").Insert(source);
+        db.GetCollection<BackupModel>("SourceGroup").Insert(backup);
     }
 
-    public void AddDestination(DestinationModel destination)
+    public void UpdateBackup(BackupModel editedBackup)
     {
         using var db = new LiteDatabase(_connectionString);
 
-        if (db.GetCollection<DestinationModel>("DestinationGroup")
-            .Exists(g => g.Name.ToLower() == destination.Name.ToLower()))
-            throw new Exception("Destination name is already exist!");
+        var backups = db.GetCollection<BackupModel>("BackupPlans");
+        var backup = backups.FindOne(x => x.Name == editedBackup.Name)
+            ?? throw new Exception($"Backup {editedBackup.Name} not founded!");
 
-        db.GetCollection<DestinationModel>("DestinationGroup").Insert(destination);
+        backup.Name = editedBackup.Name;
+        backup.Sources = editedBackup.Sources;
+        backup.Destinations = editedBackup.Destinations;
+
+        backups.Update(backup);
     }
 
-    public void AddCopyPlan(CopyPlanModel copyPlan)
+    public void RemoveBackup(string backupName)
     {
         using var db = new LiteDatabase(_connectionString);
+        var BackupId = db.GetCollection<BackupModel>("BackupPlans")
+            .FindOne(x => x.Name == backupName).Id;
 
-        if (db.GetCollection<CopyPlanModel>("PlanGroup")
-            .Exists(x => x.PlanName.ToLower() == copyPlan.PlanName.ToLower()))
-            throw new Exception("Copy Plane is already exist!");
+        if (BackupId <= 0)
+            throw new Exception($"Backup {backupName} not founded!");
 
-        db.GetCollection<CopyPlanModel>("PlanGroup").Insert(copyPlan);
+        db.GetCollection<BackupModel>("BackupPlans").Delete(BackupId);
     }
-
-    public void RemoveSource(string sourceName)
-    {
-        using var db = new LiteDatabase(_connectionString);
-        var sourceId = db.GetCollection<SourceModel>("SourceGroup").FindOne(x => x.Name == sourceName).Id;
-        db.GetCollection<SourceModel>("SourceGroup").Delete(sourceId);
-    }
-
-    public void RemoveDestination(string destinationName)
-    {
-        using var db = new LiteDatabase(_connectionString);
-        var destinationId = db.GetCollection<DestinationModel>("DestinationGroup")
-            .FindOne(x => x.Name == destinationName).Id;
-        db.GetCollection<DestinationModel>("DestinationGroup").Delete(destinationId);
-    }
-
-    public void RemoveCopyPlan(string copyPlanName)
-    {
-        using var db = new LiteDatabase(_connectionString);
-        var copyPlanId = db.GetCollection<CopyPlanModel>("PlanGroup")
-            .FindOne(x => x.PlanName == copyPlanName).Id;
-
-        db.GetCollection<CopyPlanModel>("PlanGroup").Delete(copyPlanId);
-    }
-
-
 }

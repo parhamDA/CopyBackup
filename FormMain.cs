@@ -216,7 +216,7 @@ public partial class FormMain : Form
     {
         try
         {
-            listBoxBackups.Items.AddRange(_database.GetBackupsName().ToArray());
+            listBoxBackups.Items.AddRange(_database.GetBackups().ToArray());
         }
         catch (Exception ex)
         {
