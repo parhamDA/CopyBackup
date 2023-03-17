@@ -37,9 +37,9 @@ public class Database
         using var db = new LiteDatabase(_connectionString);
 
         if (db.GetCollection<BackupModel>("BackupPlans").Exists(x => x.Name.ToLower() == backup.Name.ToLower()))
-            throw new Exception("Source name is already exist!");
+            throw new Exception("Backup name is already exist!");
 
-        db.GetCollection<BackupModel>("SourceGroup").Insert(backup);
+        db.GetCollection<BackupModel>("BackupPlans").Insert(backup);
     }
 
     public void UpdateBackup(BackupModel editedBackup)
@@ -50,6 +50,10 @@ public class Database
         var backup = backups.FindOne(x => x.Name == editedBackup.Name)
             ?? throw new Exception($"Backup {editedBackup.Name} not founded!");
 
+        if(backup.Name.ToLower() != editedBackup.Name.ToLower())
+            if(backups.FindOne(x=>x.Name.ToLower() == editedBackup.Name.ToLower()) is not null)
+                throw new Exception("Back name is already exist!");
+
         backup.Name = editedBackup.Name;
         backup.Sources = editedBackup.Sources;
         backup.Destinations = editedBackup.Destinations;
@@ -57,7 +61,7 @@ public class Database
         backups.Update(backup);
     }
 
-    public void RemoveBackup(string backupName)
+    public void DeleteBackup(string backupName)
     {
         using var db = new LiteDatabase(_connectionString);
         var BackupId = db.GetCollection<BackupModel>("BackupPlans")

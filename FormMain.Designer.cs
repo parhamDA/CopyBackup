@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             toolStrip = new ToolStrip();
             btnAddBackup = new ToolStripButton();
@@ -39,12 +40,12 @@
             listBoxDestinations = new ListBox();
             statusStrip = new StatusStrip();
             lblStatus = new ToolStripStatusLabel();
-            progressBar = new ToolStripProgressBar();
             splitContainer = new SplitContainer();
             groupBoxBackup = new GroupBox();
             listBoxBackups = new ListBox();
             groupBoxListView = new GroupBox();
             listView = new ListView();
+            imageList = new ImageList(components);
             toolStrip.SuspendLayout();
             groupBoxDestinations.SuspendLayout();
             statusStrip.SuspendLayout();
@@ -83,6 +84,7 @@
             btnDeleteBackup.Name = "btnDeleteBackup";
             btnDeleteBackup.Size = new Size(23, 22);
             btnDeleteBackup.Text = "Delete Backup";
+            btnDeleteBackup.Click += BtnDeleteBackup_Click;
             // 
             // btnEditBackup
             // 
@@ -92,6 +94,7 @@
             btnEditBackup.Name = "btnEditBackup";
             btnEditBackup.Size = new Size(23, 22);
             btnEditBackup.Text = "Edit Backup";
+            btnEditBackup.Click += BtnEditBackup_Click;
             // 
             // toolStripSeparator1
             // 
@@ -106,6 +109,7 @@
             btnRun.Name = "btnRun";
             btnRun.Size = new Size(23, 22);
             btnRun.Text = "toolStripButton1";
+            btnRun.Click += BtnRun_Click;
             // 
             // groupBoxDestinations
             // 
@@ -125,12 +129,14 @@
             listBoxDestinations.ItemHeight = 15;
             listBoxDestinations.Location = new Point(3, 19);
             listBoxDestinations.Name = "listBoxDestinations";
+            listBoxDestinations.SelectionMode = SelectionMode.None;
             listBoxDestinations.Size = new Size(194, 485);
+            listBoxDestinations.Sorted = true;
             listBoxDestinations.TabIndex = 0;
             // 
             // statusStrip
             // 
-            statusStrip.Items.AddRange(new ToolStripItem[] { lblStatus, progressBar });
+            statusStrip.Items.AddRange(new ToolStripItem[] { lblStatus });
             statusStrip.Location = new Point(0, 532);
             statusStrip.Name = "statusStrip";
             statusStrip.Size = new Size(866, 22);
@@ -141,15 +147,9 @@
             // lblStatus
             // 
             lblStatus.Name = "lblStatus";
-            lblStatus.Size = new Size(669, 17);
+            lblStatus.Size = new Size(851, 17);
             lblStatus.Spring = true;
-            // 
-            // progressBar
-            // 
-            progressBar.BackColor = SystemColors.Control;
-            progressBar.Name = "progressBar";
-            progressBar.Size = new Size(180, 16);
-            progressBar.Style = ProgressBarStyle.Continuous;
+            lblStatus.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // splitContainer
             // 
@@ -187,6 +187,7 @@
             listBoxBackups.Location = new Point(3, 19);
             listBoxBackups.Name = "listBoxBackups";
             listBoxBackups.Size = new Size(214, 485);
+            listBoxBackups.Sorted = true;
             listBoxBackups.TabIndex = 0;
             // 
             // groupBoxListView
@@ -203,11 +204,20 @@
             // listView
             // 
             listView.Dock = DockStyle.Fill;
+            listView.LargeImageList = imageList;
             listView.Location = new Point(3, 19);
             listView.Name = "listView";
             listView.Size = new Size(436, 485);
             listView.TabIndex = 0;
             listView.UseCompatibleStateImageBehavior = false;
+            // 
+            // imageList
+            // 
+            imageList.ColorDepth = ColorDepth.Depth8Bit;
+            imageList.ImageStream = (ImageListStreamer)resources.GetObject("imageList.ImageStream");
+            imageList.TransparentColor = Color.Transparent;
+            imageList.Images.SetKeyName(0, "File.png");
+            imageList.Images.SetKeyName(1, "Folder.png");
             // 
             // FormMain
             // 
@@ -258,6 +268,6 @@
         private GroupBox groupBoxListView;
         private ListView listView;
         private ToolStripStatusLabel lblStatus;
-        private ToolStripProgressBar progressBar;
+        private ImageList imageList;
     }
 }

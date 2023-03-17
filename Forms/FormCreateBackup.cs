@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using CopyBackup.Models;
 
-namespace CopyBackup.Forms
+namespace CopyBackup.Forms;
+
+public partial class FormCreateBackup : Form
 {
-    public partial class FormCreateBackup : Form
+    public FormCreateBackup()
     {
-        public FormCreateBackup()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+    }
+
+    public FormCreateBackup(string backupName)
+    {
+        InitializeComponent();
     }
 }
