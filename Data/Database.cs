@@ -15,18 +15,16 @@ public class Database
         };
     }
 
-    public IEnumerable<string> GetSourcesName()
+    public IEnumerable<string> GetBackups()
     {
-        var sourceNames = new List<string>();
+        using var db = new LiteDatabase(_connectionString);
         
-        using (var db = new LiteDatabase(_connectionString))
-        {
-            sourceNames.AddRange(
-                db.GetCollection<SourceModel>("SourceGroup")
-                .FindAll().OrderBy(x => x.Name).Select(g => g.Name));
-        }
+        var backups = new List<string>();
+        backups.AddRange(
+            db.GetCollection<BackupModel>("Backups")
+            .FindAll().OrderBy(x => x.Name).Select(g => g.Name));
 
-        return sourceNames;
+        return backups;
     }
 
     public IEnumerable<string> GetDestinationsName()
@@ -46,11 +44,11 @@ public class Database
     public IEnumerable<string> GetPlansName()
     {
         var planNames = new List<string>();
-        
+
         using (var db = new LiteDatabase(_connectionString))
         {
             planNames.AddRange(db.GetCollection<CopyPlanModel>("PlansGroup")
-                .FindAll().OrderBy(x=>x.PlanName).Select(x => x.PlanName));
+                .FindAll().OrderBy(x => x.PlanName).Select(x => x.PlanName));
         }
 
         return planNames;
@@ -82,8 +80,8 @@ public class Database
         using var db = new LiteDatabase(_connectionString);
         planDestinations.AddRange(db.GetCollection<CopyPlanModel>("PlanGroup")
             .Query()
-            .Where(x=> planName == x.PlanName)
-            .Select(x=>x.PlanName).ToList());
+            .Where(x => planName == x.PlanName)
+            .Select(x => x.PlanName).ToList());
 
         return planDestinations;
     }
@@ -113,8 +111,8 @@ public class Database
     {
         using var db = new LiteDatabase(_connectionString);
 
-        if(db.GetCollection<CopyPlanModel>("PlanGroup")
-            .Exists(x=>x.PlanName.ToLower() == copyPlan.PlanName.ToLower()))
+        if (db.GetCollection<CopyPlanModel>("PlanGroup")
+            .Exists(x => x.PlanName.ToLower() == copyPlan.PlanName.ToLower()))
             throw new Exception("Copy Plane is already exist!");
 
         db.GetCollection<CopyPlanModel>("PlanGroup").Insert(copyPlan);
@@ -139,8 +137,10 @@ public class Database
     {
         using var db = new LiteDatabase(_connectionString);
         var copyPlanId = db.GetCollection<CopyPlanModel>("PlanGroup")
-            .FindOne(x=>x.PlanName == copyPlanName).Id;
+            .FindOne(x => x.PlanName == copyPlanName).Id;
 
         db.GetCollection<CopyPlanModel>("PlanGroup").Delete(copyPlanId);
     }
+
+
 }
