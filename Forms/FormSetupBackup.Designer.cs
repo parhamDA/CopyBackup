@@ -1,6 +1,6 @@
 ﻿namespace CopyBackup.Forms
 {
-    partial class FormCreateBackup
+    partial class FormSetupBackup
     {
         /// <summary>
         /// Required designer variable.
@@ -34,7 +34,8 @@
             panel1 = new Panel();
             listBoxSource = new ListBox();
             toolStrip1 = new ToolStrip();
-            btnAddSource = new ToolStripButton();
+            btnAddFolder = new ToolStripButton();
+            btnAddFile = new ToolStripButton();
             btnDeleteSource = new ToolStripButton();
             groupBox2 = new GroupBox();
             panel2 = new Panel();
@@ -44,6 +45,7 @@
             btnDeleteDestination = new ToolStripButton();
             btnSave = new Button();
             folderBrowserDialog = new FolderBrowserDialog();
+            openFileDialog = new OpenFileDialog();
             groupBox1.SuspendLayout();
             panel1.SuspendLayout();
             toolStrip1.SuspendLayout();
@@ -66,7 +68,7 @@
             tbBackupName.Location = new Point(99, 6);
             tbBackupName.MaxLength = 50;
             tbBackupName.Name = "tbBackupName";
-            tbBackupName.Size = new Size(317, 23);
+            tbBackupName.Size = new Size(545, 23);
             tbBackupName.TabIndex = 1;
             // 
             // groupBox1
@@ -101,22 +103,32 @@
             // 
             // toolStrip1
             // 
-            toolStrip1.Items.AddRange(new ToolStripItem[] { btnAddSource, btnDeleteSource });
+            toolStrip1.Items.AddRange(new ToolStripItem[] { btnAddFolder, btnAddFile, btnDeleteSource });
             toolStrip1.Location = new Point(3, 19);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new Size(194, 25);
             toolStrip1.TabIndex = 0;
             toolStrip1.Text = "toolStrip1";
             // 
-            // btnAddSource
+            // btnAddFolder
             // 
-            btnAddSource.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            btnAddSource.Image = Properties.Resources.Add;
-            btnAddSource.ImageTransparentColor = Color.Magenta;
-            btnAddSource.Name = "btnAddSource";
-            btnAddSource.Size = new Size(23, 22);
-            btnAddSource.Text = "Add Source";
-            btnAddSource.Click += BtnAddSource_Click;
+            btnAddFolder.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            btnAddFolder.Image = Properties.Resources.AddFolder;
+            btnAddFolder.ImageTransparentColor = Color.Magenta;
+            btnAddFolder.Name = "btnAddFolder";
+            btnAddFolder.Size = new Size(23, 22);
+            btnAddFolder.Text = "Add Folder";
+            btnAddFolder.Click += BtnAddFolder_Click;
+            // 
+            // btnAddFile
+            // 
+            btnAddFile.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            btnAddFile.Image = Properties.Resources.AddFile;
+            btnAddFile.ImageTransparentColor = Color.Magenta;
+            btnAddFile.Name = "btnAddFile";
+            btnAddFile.Size = new Size(23, 22);
+            btnAddFile.Text = "Add File";
+            btnAddFile.Click += BtnAddFile_Click;
             // 
             // btnDeleteSource
             // 
@@ -134,7 +146,7 @@
             groupBox2.Controls.Add(toolStrip2);
             groupBox2.Location = new Point(219, 35);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(200, 284);
+            groupBox2.Size = new Size(428, 284);
             groupBox2.TabIndex = 3;
             groupBox2.TabStop = false;
             groupBox2.Text = "Destination Items";
@@ -145,7 +157,7 @@
             panel2.Dock = DockStyle.Fill;
             panel2.Location = new Point(3, 44);
             panel2.Name = "panel2";
-            panel2.Size = new Size(194, 237);
+            panel2.Size = new Size(422, 237);
             panel2.TabIndex = 1;
             // 
             // listBoxDestination
@@ -155,7 +167,7 @@
             listBoxDestination.ItemHeight = 15;
             listBoxDestination.Location = new Point(0, 0);
             listBoxDestination.Name = "listBoxDestination";
-            listBoxDestination.Size = new Size(194, 237);
+            listBoxDestination.Size = new Size(422, 237);
             listBoxDestination.TabIndex = 0;
             // 
             // toolStrip2
@@ -163,7 +175,7 @@
             toolStrip2.Items.AddRange(new ToolStripItem[] { btnAddDestination, btnDeleteDestination });
             toolStrip2.Location = new Point(3, 19);
             toolStrip2.Name = "toolStrip2";
-            toolStrip2.Size = new Size(194, 25);
+            toolStrip2.Size = new Size(422, 25);
             toolStrip2.TabIndex = 0;
             toolStrip2.Text = "toolStrip2";
             // 
@@ -197,11 +209,15 @@
             btnSave.UseVisualStyleBackColor = true;
             btnSave.Click += BtnSave_Click;
             // 
+            // openFileDialog
+            // 
+            openFileDialog.Multiselect = true;
+            // 
             // FormCreateBackup
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(431, 352);
+            ClientSize = new Size(659, 352);
             Controls.Add(btnSave);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
@@ -234,7 +250,7 @@
         private Panel panel1;
         private ListBox listBoxSource;
         private ToolStrip toolStrip1;
-        private ToolStripButton btnAddSource;
+        private ToolStripButton btnAddFolder;
         private ToolStripButton btnDeleteSource;
         private GroupBox groupBox2;
         private Panel panel2;
@@ -244,5 +260,7 @@
         private ToolStripButton btnDeleteDestination;
         private Button btnSave;
         private FolderBrowserDialog folderBrowserDialog;
+        private OpenFileDialog openFileDialog;
+        private ToolStripButton btnAddFile;
     }
 }

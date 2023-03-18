@@ -18,11 +18,18 @@ public class Database
 
     public IEnumerable<string> GetBackups()
     {
-        using var db = new LiteDatabase(_connectionString);
-        return db.GetCollection<BackupModel>("‌BackupPlans")
-            .FindAll()
-            .OrderBy(x => x.Name)
-            .Select(x => x.Name);
+        var backups = new List<string>();
+
+        using (var db = new LiteDatabase(_connectionString))
+        {
+            backups.AddRange(
+                db.GetCollection<BackupModel>("BackupPlans")
+                .FindAll()
+                .OrderBy(x => x.Name)
+                .Select(x => x.Name));
+        }
+
+        return backups;
     }
 
     public BackupModel GetBackup(string backupName)
@@ -35,7 +42,6 @@ public class Database
     public void AddBackup(BackupModel backup)
     {
         using var db = new LiteDatabase(_connectionString);
-
         if (db.GetCollection<BackupModel>("BackupPlans").Exists(x => x.Name.ToLower() == backup.Name.ToLower()))
             throw new Exception("Backup name is already exist!");
 
