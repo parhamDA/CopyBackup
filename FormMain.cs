@@ -1,11 +1,13 @@
 ﻿using CopyBackup.Data;
 using CopyBackup.Forms;
+using CopyBackup.Models;
 
 namespace CopyBackup;
 
 public partial class FormMain : Form
 {
     private readonly Database _database = new();
+    private BackupModel _selectedbackup = new();
 
     public FormMain()
     {
@@ -45,7 +47,7 @@ public partial class FormMain : Form
 
     private void BtnEditBackup_Click(object sender, EventArgs e)
     {
-        var frmCreateBackup = new FormCreateBackup();
+        var frmCreateBackup = new FormCreateBackup(_selectedbackup);
         var frmCreateBackupDialogResult = frmCreateBackup.ShowDialog();
         if (frmCreateBackupDialogResult != DialogResult.OK) return;
 
@@ -63,18 +65,33 @@ public partial class FormMain : Form
 
         try
         {
-            var backup = _database.GetBackup(selectedBackup);
-            if (backup is null)
-            {
-                MessageBox.Show("Selected backup not founded!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            var frmRunBackup = new FormRunBackup(backup);
+            var frmRunBackup = new FormRunBackup(_selectedbackup);
             var frmRunBackupDialogResult = frmRunBackup.ShowDialog();
             if (frmRunBackupDialogResult == DialogResult.OK)
                 lblStatus.Text = "Backup finished successfully";
             else lblStatus.Text = "There is an issue in backup process!";
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+
+    private void ListBoxBackups_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (listBoxBackups.SelectedItem is null ||
+            string.IsNullOrEmpty(listBoxBackups.SelectedItem.ToString())) 
+            return;
+
+        try
+        {
+            _selectedbackup = _database.GetBackup(listBoxBackups.SelectedItem.ToString()!);
+            if (_selectedbackup is null)
+            {
+                MessageBox.Show("Selected backup not founded!",
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
         }
         catch (Exception ex)
         {

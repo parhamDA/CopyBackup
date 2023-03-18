@@ -189,6 +189,7 @@
             listBoxBackups.Size = new Size(214, 485);
             listBoxBackups.Sorted = true;
             listBoxBackups.TabIndex = 0;
+            listBoxBackups.SelectedIndexChanged += ListBoxBackups_SelectedIndexChanged;
             // 
             // groupBoxListView
             // 
