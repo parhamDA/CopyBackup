@@ -60,7 +60,9 @@ public partial class FormMain : Form
 
     private void BtnEditBackup_Click(object sender, EventArgs e)
     {
-        if (_selectedbackup.Id <= 0) return;
+        if (listBoxBackups.SelectedItem is null ||
+            string.IsNullOrEmpty(listBoxBackups.SelectedItem.ToString()))
+            return;
 
         var frmSetupBackup = new FormSetupBackup(_selectedbackup);
         var frmSetupBackupDialogResult = frmSetupBackup.ShowDialog();
@@ -77,12 +79,9 @@ public partial class FormMain : Form
 
     private void BtnRun_Click(object sender, EventArgs e)
     {
-        var selectedBackup = listBoxBackups.SelectedItem.ToString();
-        if (string.IsNullOrEmpty(selectedBackup))
-        {
-            lblStatus.Text = "Backup plan not selected to run!";
+        if (listBoxBackups.SelectedItem is null ||
+            string.IsNullOrEmpty(listBoxBackups.SelectedItem.ToString()))
             return;
-        }
 
         try
         {

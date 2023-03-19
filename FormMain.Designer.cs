@@ -46,8 +46,8 @@
             panelBackupDestination = new Panel();
             panelListView = new Panel();
             groupBoxListView = new GroupBox();
-            imageList = new ImageList(components);
             listView = new ListView();
+            imageList = new ImageList(components);
             toolStrip.SuspendLayout();
             groupBoxDestinations.SuspendLayout();
             statusStrip.SuspendLayout();
@@ -112,7 +112,7 @@
             btnRun.ImageTransparentColor = Color.Magenta;
             btnRun.Name = "btnRun";
             btnRun.Size = new Size(23, 22);
-            btnRun.Text = "toolStripButton1";
+            btnRun.Text = "Run Backup";
             btnRun.Click += BtnRun_Click;
             // 
             // groupBoxDestinations
@@ -227,14 +227,6 @@
             groupBoxListView.TabStop = false;
             groupBoxListView.Text = "Backup Items";
             // 
-            // imageList
-            // 
-            imageList.ColorDepth = ColorDepth.Depth32Bit;
-            imageList.ImageStream = (ImageListStreamer)resources.GetObject("imageList.ImageStream");
-            imageList.TransparentColor = Color.Transparent;
-            imageList.Images.SetKeyName(0, "File.png");
-            imageList.Images.SetKeyName(1, "Folder.png");
-            // 
             // listView
             // 
             listView.Dock = DockStyle.Fill;
@@ -244,6 +236,14 @@
             listView.Size = new Size(680, 344);
             listView.TabIndex = 0;
             listView.UseCompatibleStateImageBehavior = false;
+            // 
+            // imageList
+            // 
+            imageList.ColorDepth = ColorDepth.Depth32Bit;
+            imageList.ImageStream = (ImageListStreamer)resources.GetObject("imageList.ImageStream");
+            imageList.TransparentColor = Color.Transparent;
+            imageList.Images.SetKeyName(0, "File.png");
+            imageList.Images.SetKeyName(1, "Folder.png");
             // 
             // FormMain
             // 
