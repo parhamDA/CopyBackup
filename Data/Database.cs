@@ -7,7 +7,7 @@ namespace CopyBackup.Data;
 public class Database
 {
     private readonly ConnectionString _connectionString;
-
+    
     public Database()
     {
         _connectionString = new ConnectionString
@@ -53,7 +53,7 @@ public class Database
         using var db = new LiteDatabase(_connectionString);
 
         var backups = db.GetCollection<BackupModel>("BackupPlans");
-        var backup = backups.FindOne(x => x.Name == editedBackup.Name)
+        var backup = backups.FindOne(x => x.Id == editedBackup.Id)
             ?? throw new Exception($"Backup {editedBackup.Name} not founded!");
 
         if(backup.Name.ToLower() != editedBackup.Name.ToLower())
@@ -67,15 +67,13 @@ public class Database
         backups.Update(backup);
     }
 
-    public void DeleteBackup(string backupName)
+    public void DeleteBackup(int id)
     {
         using var db = new LiteDatabase(_connectionString);
-        var BackupId = db.GetCollection<BackupModel>("BackupPlans")
-            .FindOne(x => x.Name == backupName).Id;
-
-        if (BackupId <= 0)
-            throw new Exception($"Backup {backupName} not founded!");
-
-        db.GetCollection<BackupModel>("BackupPlans").Delete(BackupId);
+        
+        var backup = db.GetCollection<BackupModel>("BackupPlans")
+            .FindOne(x => x.Id == id) ?? throw new Exception($"Backup not founded!");
+        
+        db.GetCollection<BackupModel>("BackupPlans").Delete(backup.Id);
     }
 }

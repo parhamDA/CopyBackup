@@ -10,6 +10,12 @@ public partial class FormSetupBackup : Form
     private readonly List<SourceModel> _sources = new();
     private readonly List<DestinationModel> _destinations = new();
 
+    private readonly bool _isUpdate = false;
+    private readonly int _editBackupId;
+
+    public string? SavedBackupName { get; set; }
+
+
     public FormSetupBackup()
     {
         InitializeComponent();
@@ -18,6 +24,8 @@ public partial class FormSetupBackup : Form
     public FormSetupBackup(BackupModel backup)
     {
         InitializeComponent();
+        
+        Text = "Edit Backup";
 
         _sources.AddRange(backup.Sources);
         listBoxSource.Items.AddRange(_sources.Select(x => x.Name).ToArray());
@@ -26,6 +34,9 @@ public partial class FormSetupBackup : Form
         listBoxDestination.Items.AddRange(_destinations.Select(x => x.Path).ToArray());
 
         tbBackupName.Text = backup.Name;
+        _editBackupId = backup.Id;
+
+        _isUpdate = true;
     }
 
     private void BtnAddFolder_Click(object sender, EventArgs e)
@@ -120,13 +131,19 @@ public partial class FormSetupBackup : Form
 
         try
         {
-            _database.AddBackup(new BackupModel
+            var backup = new BackupModel
             {
+                Id = _editBackupId,
                 Name = tbBackupName.Text,
                 Sources = _sources,
-                Destinations = _destinations
-            });
+                Destinations = _destinations,
+            };
 
+            if(_isUpdate) _database.UpdateBackup(backup);
+            else _database.AddBackup(backup);
+
+            SavedBackupName = backup.Name;
+            
             DialogResult = DialogResult.OK;
         }
         catch (Exception ex)

@@ -16,7 +16,14 @@ public partial class FormMain : Form
 
     private void FormMain_Load(object sender, EventArgs e)
     {
-        LoadBackupsName();
+        try
+        {
+            listBoxBackups.Items.AddRange(_database.GetBackups().ToArray());
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
     }
 
     private void BtnAddBackup_Click(object sender, EventArgs e)
@@ -25,38 +32,47 @@ public partial class FormMain : Form
         var frmSetupBackupDialogResult = frmSetupBackup.ShowDialog();
         if (frmSetupBackupDialogResult != DialogResult.OK) return;
 
-        LoadBackupsName();
+        listBoxBackups.Items.Add(frmSetupBackup.SavedBackupName!);
+        listBoxBackups.SelectedItem = frmSetupBackup.SavedBackupName!;
     }
 
     private void BtnDeleteBackup_Click(object sender, EventArgs e)
     {
-        var selectedItem = listBoxBackups.SelectedItem.ToString();
+        if (listBoxBackups.SelectedItem is null ||
+            string.IsNullOrEmpty(listBoxBackups.SelectedItem.ToString()))
+            return;
+
         listBoxBackups.Items.RemoveAt(listBoxBackups.SelectedIndex);
         listBoxDestinations.Items.Clear();
         listView.Items.Clear();
-        _selectedbackup = new();
-    
+
         try
         {
-            if (string.IsNullOrEmpty(selectedItem)) return;
-
-            _database.DeleteBackup(selectedItem);
+            _database.DeleteBackup(_selectedbackup.Id);
         }
         catch (Exception ex)
         {
             MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
+
+        _selectedbackup = new();
     }
 
     private void BtnEditBackup_Click(object sender, EventArgs e)
     {
-        if(_selectedbackup.Id <= 0) return;
+        if (_selectedbackup.Id <= 0) return;
 
         var frmSetupBackup = new FormSetupBackup(_selectedbackup);
         var frmSetupBackupDialogResult = frmSetupBackup.ShowDialog();
         if (frmSetupBackupDialogResult != DialogResult.OK) return;
 
-        LoadBackupsName();
+        var savedBackupName = frmSetupBackup.SavedBackupName;
+        var listBoxItemIndex = listBoxBackups.Items.IndexOf(_selectedbackup.Name);
+
+        if (_selectedbackup.Name != savedBackupName)
+            listBoxBackups.Items[listBoxItemIndex] = savedBackupName!;
+        else
+            listBoxBackups.Items[listBoxItemIndex] = _selectedbackup.Name;
     }
 
     private void BtnRun_Click(object sender, EventArgs e)
@@ -116,18 +132,5 @@ public partial class FormMain : Form
 
         listBoxDestinations.Items.Clear();
         listBoxDestinations.Items.AddRange(_selectedbackup.Destinations.Select(x => x.Path).ToArray());
-    }
-
-    private void LoadBackupsName()
-    {
-        try
-        {
-            listBoxBackups.Items.AddRange(_database.GetBackups().ToArray());
-            lblStatus.Text = string.Empty;
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
     }
 }

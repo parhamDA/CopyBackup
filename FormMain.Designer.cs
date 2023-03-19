@@ -43,11 +43,11 @@
             splitContainer = new SplitContainer();
             groupBoxBackup = new GroupBox();
             listBoxBackups = new ListBox();
-            groupBoxListView = new GroupBox();
-            listView = new ListView();
-            imageList = new ImageList(components);
-            panelListView = new Panel();
             panelBackupDestination = new Panel();
+            panelListView = new Panel();
+            groupBoxListView = new GroupBox();
+            imageList = new ImageList(components);
+            listView = new ListView();
             toolStrip.SuspendLayout();
             groupBoxDestinations.SuspendLayout();
             statusStrip.SuspendLayout();
@@ -56,9 +56,9 @@
             splitContainer.Panel2.SuspendLayout();
             splitContainer.SuspendLayout();
             groupBoxBackup.SuspendLayout();
-            groupBoxListView.SuspendLayout();
-            panelListView.SuspendLayout();
             panelBackupDestination.SuspendLayout();
+            panelListView.SuspendLayout();
+            groupBoxListView.SuspendLayout();
             SuspendLayout();
             // 
             // toolStrip
@@ -198,6 +198,24 @@
             listBoxBackups.TabIndex = 0;
             listBoxBackups.SelectedIndexChanged += ListBoxBackups_SelectedIndexChanged;
             // 
+            // panelBackupDestination
+            // 
+            panelBackupDestination.Controls.Add(groupBoxDestinations);
+            panelBackupDestination.Dock = DockStyle.Bottom;
+            panelBackupDestination.Location = new Point(0, 372);
+            panelBackupDestination.Name = "panelBackupDestination";
+            panelBackupDestination.Size = new Size(686, 135);
+            panelBackupDestination.TabIndex = 3;
+            // 
+            // panelListView
+            // 
+            panelListView.Controls.Add(groupBoxListView);
+            panelListView.Dock = DockStyle.Top;
+            panelListView.Location = new Point(0, 0);
+            panelListView.Name = "panelListView";
+            panelListView.Size = new Size(686, 366);
+            panelListView.TabIndex = 2;
+            // 
             // groupBoxListView
             // 
             groupBoxListView.Controls.Add(listView);
@@ -209,6 +227,14 @@
             groupBoxListView.TabStop = false;
             groupBoxListView.Text = "Backup Items";
             // 
+            // imageList
+            // 
+            imageList.ColorDepth = ColorDepth.Depth32Bit;
+            imageList.ImageStream = (ImageListStreamer)resources.GetObject("imageList.ImageStream");
+            imageList.TransparentColor = Color.Transparent;
+            imageList.Images.SetKeyName(0, "File.png");
+            imageList.Images.SetKeyName(1, "Folder.png");
+            // 
             // listView
             // 
             listView.Dock = DockStyle.Fill;
@@ -218,32 +244,6 @@
             listView.Size = new Size(680, 344);
             listView.TabIndex = 0;
             listView.UseCompatibleStateImageBehavior = false;
-            // 
-            // imageList
-            // 
-            imageList.ColorDepth = ColorDepth.Depth8Bit;
-            imageList.ImageStream = (ImageListStreamer)resources.GetObject("imageList.ImageStream");
-            imageList.TransparentColor = Color.Transparent;
-            imageList.Images.SetKeyName(0, "File.png");
-            imageList.Images.SetKeyName(1, "Folder.png");
-            // 
-            // panelListView
-            // 
-            panelListView.Controls.Add(groupBoxListView);
-            panelListView.Dock = DockStyle.Top;
-            panelListView.Location = new Point(0, 0);
-            panelListView.Name = "panelListView";
-            panelListView.Size = new Size(686, 366);
-            panelListView.TabIndex = 2;
-            // 
-            // panelBackupDestination
-            // 
-            panelBackupDestination.Controls.Add(groupBoxDestinations);
-            panelBackupDestination.Dock = DockStyle.Bottom;
-            panelBackupDestination.Location = new Point(0, 372);
-            panelBackupDestination.Name = "panelBackupDestination";
-            panelBackupDestination.Size = new Size(686, 135);
-            panelBackupDestination.TabIndex = 3;
             // 
             // FormMain
             // 
@@ -271,9 +271,9 @@
             ((System.ComponentModel.ISupportInitialize)splitContainer).EndInit();
             splitContainer.ResumeLayout(false);
             groupBoxBackup.ResumeLayout(false);
-            groupBoxListView.ResumeLayout(false);
-            panelListView.ResumeLayout(false);
             panelBackupDestination.ResumeLayout(false);
+            panelListView.ResumeLayout(false);
+            groupBoxListView.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -293,10 +293,10 @@
         private GroupBox groupBoxBackup;
         private ListBox listBoxBackups;
         private GroupBox groupBoxListView;
-        private ListView listView;
         private ToolStripStatusLabel lblStatus;
         private ImageList imageList;
         private Panel panelBackupDestination;
         private Panel panelListView;
+        private ListView listView;
     }
 }
