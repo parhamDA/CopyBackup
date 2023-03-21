@@ -31,7 +31,7 @@
             lblBackupName = new Label();
             progressBar = new ProgressBar();
             lblPercentage = new Label();
-            label2 = new Label();
+            lblCopyingFile = new Label();
             panel1 = new Panel();
             btnStopBackup = new Button();
             panel1.SuspendLayout();
@@ -62,12 +62,12 @@
             lblPercentage.TabIndex = 2;
             lblPercentage.Text = "100%";
             // 
-            // label2
+            // lblCopyingFile
             // 
-            label2.Location = new Point(12, 81);
-            label2.Name = "label2";
-            label2.Size = new Size(461, 15);
-            label2.TabIndex = 3;
+            lblCopyingFile.Location = new Point(12, 81);
+            lblCopyingFile.Name = "lblCopyingFile";
+            lblCopyingFile.Size = new Size(461, 15);
+            lblCopyingFile.TabIndex = 3;
             // 
             // panel1
             // 
@@ -95,7 +95,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(542, 179);
             Controls.Add(panel1);
-            Controls.Add(label2);
+            Controls.Add(lblCopyingFile);
             Controls.Add(lblPercentage);
             Controls.Add(progressBar);
             Controls.Add(lblBackupName);
@@ -105,8 +105,8 @@
             ShowInTaskbar = false;
             StartPosition = FormStartPosition.CenterParent;
             Text = "Backup";
+            Activated += FormRunBackup_Activated;
             FormClosing += FormRunBackup_FormClosing;
-            Load += FormRunBackup_Load;
             panel1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
@@ -117,7 +117,7 @@
         private Label lblBackupName;
         private ProgressBar progressBar;
         private Label lblPercentage;
-        private Label label2;
+        private Label lblCopyingFile;
         private Panel panel1;
         private Button btnStopBackup;
     }

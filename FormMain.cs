@@ -87,6 +87,7 @@ public partial class FormMain : Form
         {
             var frmRunBackup = new FormRunBackup(_selectedbackup);
             var frmRunBackupDialogResult = frmRunBackup.ShowDialog();
+          
             if (frmRunBackupDialogResult == DialogResult.OK)
                 lblStatus.Text = "Backup finished successfully";
             else lblStatus.Text = "There is an issue in backup process!";
