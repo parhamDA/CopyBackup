@@ -49,18 +49,17 @@
             // 
             progressBar.Location = new Point(12, 50);
             progressBar.Name = "progressBar";
-            progressBar.Size = new Size(463, 23);
+            progressBar.Size = new Size(452, 23);
             progressBar.TabIndex = 1;
             // 
             // lblPercentage
             // 
-            lblPercentage.AutoSize = true;
             lblPercentage.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            lblPercentage.Location = new Point(481, 50);
+            lblPercentage.Location = new Point(470, 50);
             lblPercentage.Name = "lblPercentage";
-            lblPercentage.Size = new Size(50, 21);
+            lblPercentage.Size = new Size(63, 21);
             lblPercentage.TabIndex = 2;
-            lblPercentage.Text = "100%";
+            lblPercentage.Text = "0%";
             // 
             // lblCopyingFile
             // 
@@ -105,8 +104,8 @@
             ShowInTaskbar = false;
             StartPosition = FormStartPosition.CenterParent;
             Text = "Backup";
-            Activated += FormRunBackup_Activated;
             FormClosing += FormRunBackup_FormClosing;
+            Shown += FormRunBackup_Shown;
             panel1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();

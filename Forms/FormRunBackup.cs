@@ -8,6 +8,7 @@ public partial class FormRunBackup : Form
     private int _sourceFilesCount = 0;
     private int _filesCopiedCount = 0;
     private bool _isBackupFinished = false;
+    private bool _isLastDestination = false;
 
     public FormRunBackup(BackupModel backup)
     {
@@ -16,11 +17,12 @@ public partial class FormRunBackup : Form
         lblBackupName.Text = $"{backup.Name} backup is currently in process";
 
         _backup = backup;
+        btnStopBackup.Text = "Stop Backup";
     }
 
     private void FormRunBackup_FormClosing(object sender, FormClosingEventArgs e)
     {
-        if(_isBackupFinished == false)
+        if (_isBackupFinished == false)
         {
             var messageBoxResult = MessageBox.Show("Are you sure you want to cancel the backup?",
             "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
@@ -31,19 +33,29 @@ public partial class FormRunBackup : Form
 
     private void BtnStopBackup_Click(object sender, EventArgs e)
     {
-        DialogResult = DialogResult.No;
-        Close();
+        DialogResult = _isBackupFinished == false ? DialogResult.No : DialogResult.Yes;
     }
 
-    private void FormRunBackup_Activated(object sender, EventArgs e)
+    private void FormRunBackup_Shown(object sender, EventArgs e)
     {
-        lblCopyingFile.Text = "Processing Backup ...";
+        // A trick from StackOverFlow site, to completely display UI before execute the rest if codes.
+        Refresh();
 
+        lblCopyingFile.Text = "Processing Backup ...";
         _sourceFilesCount = CountSourceFiles(_backup.Sources);
+
+        var destinationsPath = _backup.Destinations.Select(x => x.Path).ToList();
+        var lastDestination = destinationsPath.Last();
+
+        // progressBar.Maximum means count all sources files in all destinations path.
+        _sourceFilesCount *= destinationsPath.Count;
         progressBar.Maximum = _sourceFilesCount;
 
-        foreach (var destinationPath in _backup.Destinations.Select(x => x.Path).ToList())
+        foreach (var destinationPath in destinationsPath)
         {
+            if (destinationPath == lastDestination)
+                _isLastDestination = true;
+
             if (Directory.Exists(destinationPath) == false)
                 continue;
 
@@ -60,11 +72,12 @@ public partial class FormRunBackup : Form
             }
         }
 
-        lblCopyingFile.Text = "Backup is finished";
+        if(_sourceFilesCount == 0)
+            lblCopyingFile.Text = "No archive files to backup";
+        else lblCopyingFile.Text = "Backup is finished";
+
         _isBackupFinished = true;
-        DialogResult = DialogResult.OK;
-        
-        Close();
+        btnStopBackup.Text = "Close Backup";
     }
 
     private void CopyDirectory(string sourcePath, string destinationPath)
@@ -87,7 +100,9 @@ public partial class FormRunBackup : Form
                     lblCopyingFile.Text = file.FullName;
 
                     file.CopyTo(Path.Combine(sourceDirectoryInDestinationPath, file.Name), true);
-                    File.SetAttributes(file.FullName, file.Attributes & ~FileAttributes.Archive);
+
+                    if (_isLastDestination)
+                        File.SetAttributes(file.FullName, file.Attributes & ~FileAttributes.Archive);
                 }
             }
 
@@ -115,7 +130,9 @@ public partial class FormRunBackup : Form
                 lblCopyingFile.Text = sourcePath;
 
                 File.Copy(sourcePath, Path.Combine(destinationPath, Path.GetFileName(sourcePath)), true);
-                File.SetAttributes(sourcePath, attributes & ~FileAttributes.Archive);
+
+                if (_isLastDestination)
+                    File.SetAttributes(sourcePath, attributes & ~FileAttributes.Archive);
             }
         }
         catch (Exception ex)
@@ -158,5 +175,4 @@ public partial class FormRunBackup : Form
 
         return directoryFilesCount;
     }
-
 }

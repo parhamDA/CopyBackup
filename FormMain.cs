@@ -88,7 +88,7 @@ public partial class FormMain : Form
             var frmRunBackup = new FormRunBackup(_selectedbackup);
             var frmRunBackupDialogResult = frmRunBackup.ShowDialog();
           
-            if (frmRunBackupDialogResult == DialogResult.OK)
+            if (frmRunBackupDialogResult == DialogResult.Yes)
                 lblStatus.Text = "Backup finished successfully";
             else lblStatus.Text = "There is an issue in backup process!";
         }
@@ -132,5 +132,6 @@ public partial class FormMain : Form
 
         listBoxDestinations.Items.Clear();
         listBoxDestinations.Items.AddRange(_selectedbackup.Destinations.Select(x => x.Path).ToArray());
+        lblStatus.Text = string.Empty;
     }
 }
