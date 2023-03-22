@@ -40,6 +40,9 @@
             listBoxDestinations = new ListBox();
             statusStrip = new StatusStrip();
             lblStatus = new ToolStripStatusLabel();
+            toolStripSeparator2 = new ToolStripSeparator();
+            progressBar = new ToolStripProgressBar();
+            btnStopBackup = new ToolStripButton();
             splitContainer = new SplitContainer();
             groupBoxBackup = new GroupBox();
             listBoxBackups = new ListBox();
@@ -142,20 +145,41 @@
             // 
             // statusStrip
             // 
-            statusStrip.Items.AddRange(new ToolStripItem[] { lblStatus });
-            statusStrip.Location = new Point(0, 532);
+            statusStrip.Items.AddRange(new ToolStripItem[] { lblStatus, toolStripSeparator2, progressBar, btnStopBackup });
+            statusStrip.Location = new Point(0, 531);
             statusStrip.Name = "statusStrip";
-            statusStrip.Size = new Size(938, 22);
+            statusStrip.Size = new Size(938, 23);
             statusStrip.SizingGrip = false;
             statusStrip.TabIndex = 2;
             statusStrip.Text = "statusStrip1";
             // 
             // lblStatus
             // 
+            lblStatus.BackColor = SystemColors.Control;
+            lblStatus.ForeColor = Color.Navy;
             lblStatus.Name = "lblStatus";
-            lblStatus.Size = new Size(923, 17);
+            lblStatus.Size = new Size(792, 18);
             lblStatus.Spring = true;
             lblStatus.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // toolStripSeparator2
+            // 
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new Size(6, 23);
+            // 
+            // progressBar
+            // 
+            progressBar.Name = "progressBar";
+            progressBar.Size = new Size(100, 17);
+            // 
+            // btnStopBackup
+            // 
+            btnStopBackup.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            btnStopBackup.Image = Properties.Resources.Remove;
+            btnStopBackup.ImageTransparentColor = Color.Magenta;
+            btnStopBackup.Name = "btnStopBackup";
+            btnStopBackup.Size = new Size(23, 21);
+            btnStopBackup.Text = "Stop Backup";
             // 
             // splitContainer
             // 
@@ -171,7 +195,7 @@
             // 
             splitContainer.Panel2.Controls.Add(panelBackupDestination);
             splitContainer.Panel2.Controls.Add(panelListView);
-            splitContainer.Size = new Size(938, 507);
+            splitContainer.Size = new Size(938, 506);
             splitContainer.SplitterDistance = 248;
             splitContainer.TabIndex = 3;
             // 
@@ -181,7 +205,7 @@
             groupBoxBackup.Dock = DockStyle.Fill;
             groupBoxBackup.Location = new Point(0, 0);
             groupBoxBackup.Name = "groupBoxBackup";
-            groupBoxBackup.Size = new Size(248, 507);
+            groupBoxBackup.Size = new Size(248, 506);
             groupBoxBackup.TabIndex = 0;
             groupBoxBackup.TabStop = false;
             groupBoxBackup.Text = "Backups";
@@ -193,7 +217,7 @@
             listBoxBackups.ItemHeight = 15;
             listBoxBackups.Location = new Point(3, 19);
             listBoxBackups.Name = "listBoxBackups";
-            listBoxBackups.Size = new Size(242, 485);
+            listBoxBackups.Size = new Size(242, 484);
             listBoxBackups.Sorted = true;
             listBoxBackups.TabIndex = 0;
             listBoxBackups.SelectedIndexChanged += ListBoxBackups_SelectedIndexChanged;
@@ -202,7 +226,7 @@
             // 
             panelBackupDestination.Controls.Add(groupBoxDestinations);
             panelBackupDestination.Dock = DockStyle.Bottom;
-            panelBackupDestination.Location = new Point(0, 372);
+            panelBackupDestination.Location = new Point(0, 371);
             panelBackupDestination.Name = "panelBackupDestination";
             panelBackupDestination.Size = new Size(686, 135);
             panelBackupDestination.TabIndex = 3;
@@ -298,5 +322,8 @@
         private Panel panelBackupDestination;
         private Panel panelListView;
         private ListView listView;
+        private ToolStripSeparator toolStripSeparator2;
+        private ToolStripButton btnStopBackup;
+        private ToolStripProgressBar progressBar;
     }
 }
