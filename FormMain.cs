@@ -214,10 +214,11 @@ public partial class FormMain : Form
             lblStatus.ForeColor = Color.Black;
             lblStatus.Text = result?.FileCopiedName;
 
-            progressBar.Value = result!.FilesCopiedCount;
+            if(result!.FilesCopiedCount <= progressBar.Maximum)
+                progressBar.Value = result!.FilesCopiedCount;
         }
 
-        if(progressBar.Value == progressBar.Maximum)
+        if (progressBar.Value == progressBar.Maximum)
         {
             lblStatus.ForeColor = Color.Green;
             lblStatus.Text = $"[{_selectedbackup.Name}] backup is finished successfully . . .";
