@@ -27,6 +27,8 @@ public partial class FormMain : Form
         _copyBackgroudWorker = new BackgroundWorker();
         _copyBackgroudWorker.DoWork += new DoWorkEventHandler(RunCopyService);
         _copyBackgroudWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(CopyServiceFinished);
+        _copyBackgroudWorker.ProgressChanged += new ProgressChangedEventHandler(CopyServiceProgressChannged);
+        _copyBackgroudWorker.WorkerReportsProgress = true;
     }
 
     private void FormMain_Load(object sender, EventArgs e)
@@ -138,15 +140,14 @@ public partial class FormMain : Form
 
     private void BtnRun_Click(object sender, EventArgs e)
     {
-        if (listBoxBackups.SelectedItem is null ||
-            string.IsNullOrEmpty(listBoxBackups.SelectedItem.ToString()))
+        if (listBoxBackups.SelectedItem is null || string.IsNullOrEmpty(listBoxBackups.SelectedItem.ToString()))
             return;
 
         toolStrip.Enabled = false;
         listBoxBackups.Enabled = false;
         lblStatus.ForeColor = Color.Navy;
         lblStatus.Text = $"[{_selectedbackup.Name}] backup is in process . . .";
-
+        
         _copyService.Backup = _selectedbackup;
         progressBar.Maximum = _copyService.SourceFilesCount();
         if (progressBar.Maximum == 0)
@@ -163,16 +164,19 @@ public partial class FormMain : Form
 
     private void RunCopyService(object? sender, DoWorkEventArgs e)
     {
-        try
+        Thread.Sleep(2000);
+        var destinationsPath = _selectedbackup.Destinations.Select(x => x.Path).ToList();
+        var lastDestination = destinationsPath.Last();
+
+        _copyService.FileCopiedName = string.Empty;
+        _copyService.FilesCopiedCount = 0;
+        _copyService.RemoveArchiveAttribute = false;
+
+        bool hasError = false;
+
+        foreach (var destinationPath in destinationsPath)
         {
-            var destinationsPath = _selectedbackup.Destinations.Select(x => x.Path).ToList();
-            var lastDestination = destinationsPath.Last();
-
-            _copyService.FileCopiedName = string.Empty;
-            _copyService.FilesCopiedCount = 0;
-            _copyService.RemoveArchiveAttribute = false;
-
-            foreach (var destinationPath in destinationsPath)
+            try
             {
                 if (destinationPath == lastDestination)
                     _copyService.RemoveArchiveAttribute = true;
@@ -182,49 +186,84 @@ public partial class FormMain : Form
 
                 foreach (var source in _selectedbackup.Sources)
                 {
-                    if (source.IsFile == false && Directory.Exists(source.Path) == true)
+                    try
                     {
-                        _copyService.CopyDirectory(source.Path, destinationPath);
-                    }
-                    else
-                    {
-                        _copyService.CopyFile(source.Path, destinationPath);
-                    }
+                        if (source.IsFile == false && Directory.Exists(source.Path) == true)
+                            _copyService.CopyDirectory(source.Path, destinationPath);
+                        else
+                            _copyService.CopyFile(source.Path, destinationPath);
 
-                    e.Result = new BackupProcess
+                        if(_copyService.FilesCopiedCount != 0 && !string.IsNullOrEmpty(_copyService.FileCopiedName))
+                        {
+                            _copyBackgroudWorker.ReportProgress(0, new BackupProcess
+                            {
+                                FilesCopiedCount = _copyService.FilesCopiedCount,
+                                FileCopiedName = _copyService.FileCopiedName
+                            });
+                            Thread.Sleep(500);
+                        }
+                    }
+                    catch (Exception ex)
                     {
-                        FilesCopiedCount = _copyService.FilesCopiedCount,
-                        FileCopiedName = _copyService.FileCopiedName
-                    };
+                        MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        hasError = true;
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                hasError = true;
+            }
         }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
+
+        if (hasError)
+            e.Result = "Backup finished with error(s)";
+        else
+            e.Result = new BackupProcess
+            {
+                FilesCopiedCount = _copyService.FilesCopiedCount,
+                FileCopiedName = _copyService.FileCopiedName
+            };
     }
 
     private void CopyServiceFinished(object? sender, RunWorkerCompletedEventArgs e)
     {
         if (e.Result is null) return;
 
-        if (e.Result is BackupProcess result)
+        if (e.Result.GetType() == typeof(string))
+        {
+            lblStatus.ForeColor = Color.Red;
+            lblStatus.Text = $"[{_selectedbackup.Name}] backup is finished with some errors!";
+            progressBar.Value = progressBar.Maximum;
+            toolStrip.Enabled = true;
+            listBoxBackups.Enabled = true;
+        }
+        else if (e.Result is BackupProcess result)
         {
             lblStatus.ForeColor = Color.Black;
             lblStatus.Text = result?.FileCopiedName;
 
-            if(result!.FilesCopiedCount <= progressBar.Maximum)
+            if (result!.FilesCopiedCount <= progressBar.Maximum)
                 progressBar.Value = result!.FilesCopiedCount;
-        }
 
-        if (progressBar.Value == progressBar.Maximum)
-        {
-            lblStatus.ForeColor = Color.Green;
-            lblStatus.Text = $"[{_selectedbackup.Name}] backup is finished successfully . . .";
-            toolStrip.Enabled = true;
-            listBoxBackups.Enabled = true;
+            if (progressBar.Value == progressBar.Maximum)
+            {
+                lblStatus.ForeColor = Color.Green;
+                lblStatus.Text = $"[{_selectedbackup.Name}] backup is finished successfully . . .";
+                toolStrip.Enabled = true;
+                listBoxBackups.Enabled = true;
+            }
         }
+    }
+
+    private void CopyServiceProgressChannged(object? sender, ProgressChangedEventArgs e)
+    {
+        if (e.UserState is null) return;
+
+        var userState = (BackupProcess)e.UserState;
+        progressBar.Value = userState.FilesCopiedCount;
+        lblStatus.Text = userState.FileCopiedName;
     }
 
     private void ResetUi()
