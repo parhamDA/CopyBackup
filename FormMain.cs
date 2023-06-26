@@ -262,8 +262,13 @@ public partial class FormMain : Form
         if (e.UserState is null) return;
 
         var userState = (BackupProcess)e.UserState;
-        progressBar.Value = userState.FilesCopiedCount;
+        
         lblStatus.Text = userState.FileCopiedName;
+
+        if (userState.FilesCopiedCount >= progressBar.Maximum)
+            progressBar.Value = progressBar.Maximum;
+        else
+            progressBar.Value = userState.FilesCopiedCount;
     }
 
     private void ResetUi()
