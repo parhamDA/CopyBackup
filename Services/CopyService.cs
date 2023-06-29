@@ -1,5 +1,7 @@
 ﻿using CopyBackup.Models;
 
+using System.Security.AccessControl;
+
 namespace CopyBackup.Services;
 
 internal class CopyService
@@ -7,8 +9,9 @@ internal class CopyService
     public BackupModel Backup { get; set; } = new BackupModel();
     public string FileCopiedName { get; set; } = string.Empty;
     public int FilesCopiedCount { get; set; }
-
     public bool RemoveArchiveAttribute { get; set; } = false;
+
+    
 
     public int SourceFilesCount()
     {
@@ -44,6 +47,7 @@ internal class CopyService
 
         foreach (var subDirectory in directory.GetDirectories())
         {
+            destinationPath = directory.FullName;
             CopyDirectory(subDirectory.FullName, destinationPath);
         }
     }
@@ -80,21 +84,23 @@ internal class CopyService
         return filesCount;
     }
 
+    
+    private int _directoryFilesCount = 0;
     private int CountDirectoryFile(string path, int count)
     {
-        var directoryFilesCount = count;
+        _directoryFilesCount = count;
 
         if (Directory.Exists(path))
         {
-            directoryFilesCount +=
+            _directoryFilesCount +=
                 (from file in Directory.GetFiles(path)
                  where File.GetAttributes(file).HasFlag(FileAttributes.Archive)
                  select file).Count();
 
             foreach (var dir in Directory.GetDirectories(path))
-                CountDirectoryFile(dir, directoryFilesCount);
+                CountDirectoryFile(dir, _directoryFilesCount);
         }
 
-        return directoryFilesCount;
+        return _directoryFilesCount;
     }
 }
