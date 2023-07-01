@@ -47,8 +47,8 @@ internal class CopyService
 
         foreach (var subDirectory in directory.GetDirectories())
         {
-            destinationPath = directory.FullName;
-            CopyDirectory(subDirectory.FullName, destinationPath);
+            //destinationPath = directory.FullName;
+            CopyDirectory(subDirectory.FullName, sourceDirectoryInDestinationPath);
         }
     }
 
