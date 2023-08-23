@@ -28,194 +28,302 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
-            this.ButtonAddSourceFolder = new System.Windows.Forms.Button();
-            this.ListBoxSource = new System.Windows.Forms.ListBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.FolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-            this.ButtonRemoveSourceItem = new System.Windows.Forms.Button();
-            this.ListBoxDestination = new System.Windows.Forms.ListBox();
-            this.ButtonAddDestinationFolder = new System.Windows.Forms.Button();
-            this.ButtonRemoveDestinationItem = new System.Windows.Forms.Button();
-            this.ButtonRunCopy = new System.Windows.Forms.Button();
-            this.ListView = new System.Windows.Forms.ListView();
-            this.ImageList = new System.Windows.Forms.ImageList(this.components);
-            this.label2 = new System.Windows.Forms.Label();
-            this.ButtonUp = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.SuspendLayout();
+            toolStrip = new ToolStrip();
+            btnAddBackup = new ToolStripButton();
+            btnDeleteBackup = new ToolStripButton();
+            btnEditBackup = new ToolStripButton();
+            toolStripSeparator1 = new ToolStripSeparator();
+            btnRun = new ToolStripButton();
+            groupBoxDestinations = new GroupBox();
+            listBoxDestinations = new ListBox();
+            statusStrip = new StatusStrip();
+            lblStatus = new ToolStripStatusLabel();
+            toolStripSeparator2 = new ToolStripSeparator();
+            progressBar = new ToolStripProgressBar();
+            btnStopBackup = new ToolStripButton();
+            splitContainer = new SplitContainer();
+            groupBoxBackup = new GroupBox();
+            listBoxBackups = new ListBox();
+            panelBackupDestination = new Panel();
+            panelListView = new Panel();
+            groupBoxListView = new GroupBox();
+            listView = new ListView();
+            imageList = new ImageList(components);
+            toolStrip.SuspendLayout();
+            groupBoxDestinations.SuspendLayout();
+            statusStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer).BeginInit();
+            splitContainer.Panel1.SuspendLayout();
+            splitContainer.Panel2.SuspendLayout();
+            splitContainer.SuspendLayout();
+            groupBoxBackup.SuspendLayout();
+            panelBackupDestination.SuspendLayout();
+            panelListView.SuspendLayout();
+            groupBoxListView.SuspendLayout();
+            SuspendLayout();
             // 
-            // ButtonAddSourceFolder
+            // toolStrip
             // 
-            this.ButtonAddSourceFolder.Location = new System.Drawing.Point(12, 519);
-            this.ButtonAddSourceFolder.Name = "ButtonAddSourceFolder";
-            this.ButtonAddSourceFolder.Size = new System.Drawing.Size(75, 23);
-            this.ButtonAddSourceFolder.TabIndex = 0;
-            this.ButtonAddSourceFolder.Text = "Add";
-            this.ButtonAddSourceFolder.UseVisualStyleBackColor = true;
-            this.ButtonAddSourceFolder.Click += new System.EventHandler(this.ButtonAddSourceFolder_Click);
+            toolStrip.Items.AddRange(new ToolStripItem[] { btnAddBackup, btnDeleteBackup, btnEditBackup, toolStripSeparator1, btnRun });
+            toolStrip.Location = new Point(0, 0);
+            toolStrip.Name = "toolStrip";
+            toolStrip.Size = new Size(938, 25);
+            toolStrip.TabIndex = 0;
+            toolStrip.Text = "Run Backup";
             // 
-            // ListBoxSource
+            // btnAddBackup
             // 
-            this.ListBoxSource.FormattingEnabled = true;
-            this.ListBoxSource.ItemHeight = 15;
-            this.ListBoxSource.Location = new System.Drawing.Point(12, 27);
-            this.ListBoxSource.Name = "ListBoxSource";
-            this.ListBoxSource.Size = new System.Drawing.Size(156, 484);
-            this.ListBoxSource.TabIndex = 1;
-            this.ListBoxSource.SelectedIndexChanged += new System.EventHandler(this.ListBoxSource_SelectedIndexChanged);
+            btnAddBackup.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            btnAddBackup.Image = Properties.Resources.Add;
+            btnAddBackup.ImageTransparentColor = Color.Magenta;
+            btnAddBackup.Name = "btnAddBackup";
+            btnAddBackup.Size = new Size(23, 22);
+            btnAddBackup.Text = "Add Backup";
+            btnAddBackup.Click += BtnAddBackup_Click;
             // 
-            // label1
+            // btnDeleteBackup
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 15);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Source Items";
+            btnDeleteBackup.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            btnDeleteBackup.Image = Properties.Resources.Remove;
+            btnDeleteBackup.ImageTransparentColor = Color.Magenta;
+            btnDeleteBackup.Name = "btnDeleteBackup";
+            btnDeleteBackup.Size = new Size(23, 22);
+            btnDeleteBackup.Text = "Delete Backup";
+            btnDeleteBackup.Click += BtnDeleteBackup_Click;
             // 
-            // ButtonRemoveSourceItem
+            // btnEditBackup
             // 
-            this.ButtonRemoveSourceItem.Location = new System.Drawing.Point(93, 519);
-            this.ButtonRemoveSourceItem.Name = "ButtonRemoveSourceItem";
-            this.ButtonRemoveSourceItem.Size = new System.Drawing.Size(75, 23);
-            this.ButtonRemoveSourceItem.TabIndex = 4;
-            this.ButtonRemoveSourceItem.Text = "Remove";
-            this.ButtonRemoveSourceItem.UseVisualStyleBackColor = true;
-            this.ButtonRemoveSourceItem.Click += new System.EventHandler(this.ButtonRemoveSourceItem_Click);
+            btnEditBackup.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            btnEditBackup.Image = Properties.Resources.Edit;
+            btnEditBackup.ImageTransparentColor = Color.Magenta;
+            btnEditBackup.Name = "btnEditBackup";
+            btnEditBackup.Size = new Size(23, 22);
+            btnEditBackup.Text = "Edit Backup";
+            btnEditBackup.Click += BtnEditBackup_Click;
             // 
-            // ListBoxDestination
+            // toolStripSeparator1
             // 
-            this.ListBoxDestination.FormattingEnabled = true;
-            this.ListBoxDestination.ItemHeight = 15;
-            this.ListBoxDestination.Location = new System.Drawing.Point(631, 27);
-            this.ListBoxDestination.Name = "ListBoxDestination";
-            this.ListBoxDestination.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
-            this.ListBoxDestination.Size = new System.Drawing.Size(156, 484);
-            this.ListBoxDestination.TabIndex = 5;
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new Size(6, 25);
             // 
-            // ButtonAddDestinationFolder
+            // btnRun
             // 
-            this.ButtonAddDestinationFolder.Location = new System.Drawing.Point(631, 519);
-            this.ButtonAddDestinationFolder.Name = "ButtonAddDestinationFolder";
-            this.ButtonAddDestinationFolder.Size = new System.Drawing.Size(75, 23);
-            this.ButtonAddDestinationFolder.TabIndex = 6;
-            this.ButtonAddDestinationFolder.Text = "Add";
-            this.ButtonAddDestinationFolder.UseVisualStyleBackColor = true;
-            this.ButtonAddDestinationFolder.Click += new System.EventHandler(this.ButtonAddDestinationFolder_Click);
+            btnRun.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            btnRun.Image = Properties.Resources.Start;
+            btnRun.ImageTransparentColor = Color.Magenta;
+            btnRun.Name = "btnRun";
+            btnRun.Size = new Size(23, 22);
+            btnRun.Text = "Run Backup";
+            btnRun.Click += BtnRun_Click;
             // 
-            // ButtonRemoveDestinationItem
+            // groupBoxDestinations
             // 
-            this.ButtonRemoveDestinationItem.Location = new System.Drawing.Point(712, 519);
-            this.ButtonRemoveDestinationItem.Name = "ButtonRemoveDestinationItem";
-            this.ButtonRemoveDestinationItem.Size = new System.Drawing.Size(75, 23);
-            this.ButtonRemoveDestinationItem.TabIndex = 7;
-            this.ButtonRemoveDestinationItem.Text = "Remove";
-            this.ButtonRemoveDestinationItem.UseVisualStyleBackColor = true;
-            this.ButtonRemoveDestinationItem.Click += new System.EventHandler(this.ButtonRemoveDestinationItem_Click);
+            groupBoxDestinations.Controls.Add(listBoxDestinations);
+            groupBoxDestinations.Dock = DockStyle.Fill;
+            groupBoxDestinations.Location = new Point(0, 0);
+            groupBoxDestinations.Name = "groupBoxDestinations";
+            groupBoxDestinations.Size = new Size(686, 135);
+            groupBoxDestinations.TabIndex = 1;
+            groupBoxDestinations.TabStop = false;
+            groupBoxDestinations.Text = "Backup Destinations";
             // 
-            // ButtonRunCopy
+            // listBoxDestinations
             // 
-            this.ButtonRunCopy.Location = new System.Drawing.Point(550, 519);
-            this.ButtonRunCopy.Name = "ButtonRunCopy";
-            this.ButtonRunCopy.Size = new System.Drawing.Size(75, 23);
-            this.ButtonRunCopy.TabIndex = 8;
-            this.ButtonRunCopy.Text = "Copy";
-            this.ButtonRunCopy.UseVisualStyleBackColor = true;
-            this.ButtonRunCopy.Click += new System.EventHandler(this.ButtonRunCopy_Click);
+            listBoxDestinations.BackColor = SystemColors.WindowFrame;
+            listBoxDestinations.Dock = DockStyle.Fill;
+            listBoxDestinations.ForeColor = SystemColors.Window;
+            listBoxDestinations.FormattingEnabled = true;
+            listBoxDestinations.ItemHeight = 15;
+            listBoxDestinations.Location = new Point(3, 19);
+            listBoxDestinations.Name = "listBoxDestinations";
+            listBoxDestinations.SelectionMode = SelectionMode.None;
+            listBoxDestinations.Size = new Size(680, 113);
+            listBoxDestinations.Sorted = true;
+            listBoxDestinations.TabIndex = 0;
             // 
-            // ListView
+            // statusStrip
             // 
-            this.ListView.LargeImageList = this.ImageList;
-            this.ListView.Location = new System.Drawing.Point(174, 27);
-            this.ListView.Name = "ListView";
-            this.ListView.Size = new System.Drawing.Size(451, 484);
-            this.ListView.TabIndex = 9;
-            this.ListView.UseCompatibleStateImageBehavior = false;
-            this.ListView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.ListView_MouseDoubleClick);
+            statusStrip.Items.AddRange(new ToolStripItem[] { lblStatus, toolStripSeparator2, progressBar, btnStopBackup });
+            statusStrip.Location = new Point(0, 531);
+            statusStrip.Name = "statusStrip";
+            statusStrip.Size = new Size(938, 23);
+            statusStrip.SizingGrip = false;
+            statusStrip.TabIndex = 2;
+            statusStrip.Text = "statusStrip1";
             // 
-            // ImageList
+            // lblStatus
             // 
-            this.ImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
-            this.ImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("ImageList.ImageStream")));
-            this.ImageList.TransparentColor = System.Drawing.Color.Transparent;
-            this.ImageList.Images.SetKeyName(0, "Folder-64.ico");
-            this.ImageList.Images.SetKeyName(1, "File-64.ico");
+            lblStatus.BackColor = SystemColors.Control;
+            lblStatus.ForeColor = Color.Navy;
+            lblStatus.Name = "lblStatus";
+            lblStatus.Size = new Size(761, 18);
+            lblStatus.Spring = true;
+            lblStatus.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // label2
+            // toolStripSeparator2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(174, 9);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 15);
-            this.label2.TabIndex = 10;
-            this.label2.Text = "Source Items";
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new Size(6, 23);
             // 
-            // ButtonUp
+            // progressBar
             // 
-            this.ButtonUp.Location = new System.Drawing.Point(174, 519);
-            this.ButtonUp.Name = "ButtonUp";
-            this.ButtonUp.Size = new System.Drawing.Size(75, 23);
-            this.ButtonUp.TabIndex = 11;
-            this.ButtonUp.Text = "Up";
-            this.ButtonUp.UseVisualStyleBackColor = true;
-            this.ButtonUp.Click += new System.EventHandler(this.ButtonUp_Click);
+            progressBar.Name = "progressBar";
+            progressBar.Size = new Size(100, 17);
             // 
-            // label3
+            // btnStopBackup
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(631, 9);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(99, 15);
-            this.label3.TabIndex = 12;
-            this.label3.Text = "Destination Items";
+            btnStopBackup.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            btnStopBackup.Image = Properties.Resources.Remove;
+            btnStopBackup.ImageTransparentColor = Color.Magenta;
+            btnStopBackup.Name = "btnStopBackup";
+            btnStopBackup.Size = new Size(23, 21);
+            btnStopBackup.Text = "Stop Backup";
+            // 
+            // splitContainer
+            // 
+            splitContainer.Dock = DockStyle.Fill;
+            splitContainer.Location = new Point(0, 25);
+            splitContainer.Name = "splitContainer";
+            // 
+            // splitContainer.Panel1
+            // 
+            splitContainer.Panel1.Controls.Add(groupBoxBackup);
+            // 
+            // splitContainer.Panel2
+            // 
+            splitContainer.Panel2.Controls.Add(panelBackupDestination);
+            splitContainer.Panel2.Controls.Add(panelListView);
+            splitContainer.Size = new Size(938, 506);
+            splitContainer.SplitterDistance = 248;
+            splitContainer.TabIndex = 3;
+            // 
+            // groupBoxBackup
+            // 
+            groupBoxBackup.Controls.Add(listBoxBackups);
+            groupBoxBackup.Dock = DockStyle.Fill;
+            groupBoxBackup.Location = new Point(0, 0);
+            groupBoxBackup.Name = "groupBoxBackup";
+            groupBoxBackup.Size = new Size(248, 506);
+            groupBoxBackup.TabIndex = 0;
+            groupBoxBackup.TabStop = false;
+            groupBoxBackup.Text = "Backups";
+            // 
+            // listBoxBackups
+            // 
+            listBoxBackups.Dock = DockStyle.Fill;
+            listBoxBackups.FormattingEnabled = true;
+            listBoxBackups.ItemHeight = 15;
+            listBoxBackups.Location = new Point(3, 19);
+            listBoxBackups.Name = "listBoxBackups";
+            listBoxBackups.Size = new Size(242, 484);
+            listBoxBackups.Sorted = true;
+            listBoxBackups.TabIndex = 0;
+            listBoxBackups.SelectedIndexChanged += ListBoxBackups_SelectedIndexChanged;
+            // 
+            // panelBackupDestination
+            // 
+            panelBackupDestination.Controls.Add(groupBoxDestinations);
+            panelBackupDestination.Dock = DockStyle.Bottom;
+            panelBackupDestination.Location = new Point(0, 371);
+            panelBackupDestination.Name = "panelBackupDestination";
+            panelBackupDestination.Size = new Size(686, 135);
+            panelBackupDestination.TabIndex = 3;
+            // 
+            // panelListView
+            // 
+            panelListView.Controls.Add(groupBoxListView);
+            panelListView.Dock = DockStyle.Top;
+            panelListView.Location = new Point(0, 0);
+            panelListView.Name = "panelListView";
+            panelListView.Size = new Size(686, 366);
+            panelListView.TabIndex = 2;
+            // 
+            // groupBoxListView
+            // 
+            groupBoxListView.Controls.Add(listView);
+            groupBoxListView.Dock = DockStyle.Fill;
+            groupBoxListView.Location = new Point(0, 0);
+            groupBoxListView.Name = "groupBoxListView";
+            groupBoxListView.Size = new Size(686, 366);
+            groupBoxListView.TabIndex = 0;
+            groupBoxListView.TabStop = false;
+            groupBoxListView.Text = "Backup Items";
+            // 
+            // listView
+            // 
+            listView.Dock = DockStyle.Fill;
+            listView.LargeImageList = imageList;
+            listView.Location = new Point(3, 19);
+            listView.Name = "listView";
+            listView.Size = new Size(680, 344);
+            listView.TabIndex = 0;
+            listView.UseCompatibleStateImageBehavior = false;
+            // 
+            // imageList
+            // 
+            imageList.ColorDepth = ColorDepth.Depth32Bit;
+            imageList.ImageStream = (ImageListStreamer)resources.GetObject("imageList.ImageStream");
+            imageList.TransparentColor = Color.Transparent;
+            imageList.Images.SetKeyName(0, "File.png");
+            imageList.Images.SetKeyName(1, "Folder.png");
             // 
             // FormMain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 554);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.ButtonUp);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.ListView);
-            this.Controls.Add(this.ButtonRunCopy);
-            this.Controls.Add(this.ButtonRemoveDestinationItem);
-            this.Controls.Add(this.ButtonAddDestinationFolder);
-            this.Controls.Add(this.ListBoxDestination);
-            this.Controls.Add(this.ButtonRemoveSourceItem);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.ListBoxSource);
-            this.Controls.Add(this.ButtonAddSourceFolder);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximizeBox = false;
-            this.Name = "FormMain";
-            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Copy Backup";
-            this.Load += new System.EventHandler(this.FormMain_Load);
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(938, 554);
+            Controls.Add(splitContainer);
+            Controls.Add(statusStrip);
+            Controls.Add(toolStrip);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            Icon = (Icon)resources.GetObject("$this.Icon");
+            MaximizeBox = false;
+            Name = "FormMain";
+            SizeGripStyle = SizeGripStyle.Hide;
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Copy Backup";
+            Load += FormMain_Load;
+            toolStrip.ResumeLayout(false);
+            toolStrip.PerformLayout();
+            groupBoxDestinations.ResumeLayout(false);
+            statusStrip.ResumeLayout(false);
+            statusStrip.PerformLayout();
+            splitContainer.Panel1.ResumeLayout(false);
+            splitContainer.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer).EndInit();
+            splitContainer.ResumeLayout(false);
+            groupBoxBackup.ResumeLayout(false);
+            panelBackupDestination.ResumeLayout(false);
+            panelListView.ResumeLayout(false);
+            groupBoxListView.ResumeLayout(false);
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
-        private Button ButtonAddSourceFolder;
-        private ListBox ListBoxSource;
-        private Label label1;
-        private FolderBrowserDialog FolderBrowserDialog;
-        private Button ButtonRemoveSourceItem;
-        private ListBox ListBoxDestination;
-        private Button ButtonAddDestinationFolder;
-        private Button ButtonRemoveDestinationItem;
-        private Button ButtonRunCopy;
-        private ListView ListView;
-        private ImageList ImageList;
-        private Label label2;
-        private Button ButtonUp;
-        private Label label3;
+        private ToolStrip toolStrip;
+        private ToolStripButton btnAddBackup;
+        private ToolStripButton btnDeleteBackup;
+        private ToolStripButton btnEditBackup;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripButton btnRun;
+        private GroupBox groupBoxDestinations;
+        private ListBox listBoxDestinations;
+        private StatusStrip statusStrip;
+        private SplitContainer splitContainer;
+        private GroupBox groupBoxBackup;
+        private ListBox listBoxBackups;
+        private GroupBox groupBoxListView;
+        private ToolStripStatusLabel lblStatus;
+        private ImageList imageList;
+        private Panel panelBackupDestination;
+        private Panel panelListView;
+        private ListView listView;
+        private ToolStripSeparator toolStripSeparator2;
+        private ToolStripButton btnStopBackup;
+        private ToolStripProgressBar progressBar;
     }
 }

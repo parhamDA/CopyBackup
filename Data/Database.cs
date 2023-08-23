@@ -1,89 +1,79 @@
 ﻿using CopyBackup.Models;
+
 using LiteDB;
 
-namespace CopyBackup.Data
+namespace CopyBackup.Data;
+
+public class Database
 {
-    public class Database
+    private readonly ConnectionString _connectionString;
+    
+    public Database()
     {
-        private readonly ConnectionString _connectionString;
-        public Database()
+        _connectionString = new ConnectionString
         {
-            _connectionString = new ConnectionString 
-            { 
-                Filename = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "database.db") 
-            };
+            Filename = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CopyBackupDatabase.db")
+        };
+    }
+
+    public IEnumerable<string> GetBackups()
+    {
+        var backups = new List<string>();
+
+        using (var db = new LiteDatabase(_connectionString))
+        {
+            backups.AddRange(
+                db.GetCollection<BackupModel>("BackupPlans")
+                .FindAll()
+                .OrderBy(x => x.Name)
+                .Select(x => x.Name));
         }
 
-        public (IEnumerable<string>, IEnumerable<string>)  GetSourcesName()
-        {
-            var sourceNames = new List<string>();
-            var destinationNames = new List<string>();
+        return backups;
+    }
 
-            using (var db = new LiteDatabase(_connectionString))
-            {
-                sourceNames.AddRange(
-                    db.GetCollection<SourceModel>("SourceGroup")
-                    .FindAll().OrderBy(x => x.Name).Select(g => g.Name));
+    public BackupModel GetBackup(string backupName)
+    {
+        using var db = new LiteDatabase(_connectionString);
+        return db.GetCollection<BackupModel>("BackupPlans")
+            .FindOne(x => x.Name == backupName);
+    }
 
-                destinationNames.AddRange(
-                    db.GetCollection<DestinationModel>("DestinationGroup")
-                    .FindAll().OrderBy(x => x.Name).Select(x => x.Name));
-            }
+    public void AddBackup(BackupModel backup)
+    {
+        using var db = new LiteDatabase(_connectionString);
+        if (db.GetCollection<BackupModel>("BackupPlans").Exists(x => x.Name.ToLower() == backup.Name.ToLower()))
+            throw new Exception("Backup name is already exist!");
 
-            return (sourceNames, destinationNames);
-        }
+        db.GetCollection<BackupModel>("BackupPlans").Insert(backup);
+    }
 
-        public string GetSourcePath(string sourceName)
-        {
-            using var db = new LiteDatabase(_connectionString);
-            return db.GetCollection<SourceModel>("SourceGroup").FindOne(x => x.Name == sourceName).Path;
-        }
+    public void UpdateBackup(BackupModel editedBackup)
+    {
+        using var db = new LiteDatabase(_connectionString);
 
-        public IEnumerable<string?> GetDestinationsPath(IEnumerable<string?> destinationsName)
-        {
-            var paths = new List<string?>();
+        var backups = db.GetCollection<BackupModel>("BackupPlans");
+        var backup = backups.FindOne(x => x.Id == editedBackup.Id)
+            ?? throw new Exception($"Backup {editedBackup.Name} not founded!");
 
-            using var db = new LiteDatabase(_connectionString);
-            paths.AddRange(db.GetCollection<DestinationModel>("DestinationGroup")
-                .Query()
-                .Where(x=> destinationsName.Contains(x.Name))
-                .Select(x=>x.Path).ToList());
+        if(backup.Name.ToLower() != editedBackup.Name.ToLower())
+            if(backups.FindOne(x=>x.Name.ToLower() == editedBackup.Name.ToLower()) is not null)
+                throw new Exception("Back name is already exist!");
 
-            return paths;
-        }
+        backup.Name = editedBackup.Name;
+        backup.Sources = editedBackup.Sources;
+        backup.Destinations = editedBackup.Destinations;
 
-        public void AddSource(SourceModel source)
-        {
-            using var db = new LiteDatabase(_connectionString);
+        backups.Update(backup);
+    }
 
-            if (db.GetCollection<SourceModel>("SourceGroup").Exists(g => g.Name.ToLower() == source.Name.ToLower()))
-                throw new Exception("Source name is already exist!");
-
-            db.GetCollection<SourceModel>("SourceGroup").Insert(source);
-        }
-
-        public void AddDestination(DestinationModel destination)
-        {
-            using var db = new LiteDatabase(_connectionString);
-
-            if (db.GetCollection<DestinationModel>("DestinationGroup").Exists(g => g.Name.ToLower() == destination.Name.ToLower()))
-                throw new Exception("Destination name is already exist!");
-
-            db.GetCollection<DestinationModel>("DestinationGroup").Insert(destination);
-        }
-
-        public void RemoveSource(string sourceName)
-        {
-            using var db = new LiteDatabase(_connectionString);
-            var sourceId = db.GetCollection<SourceModel>("SourceGroup").FindOne(x => x.Name == sourceName).Id;
-            db.GetCollection<SourceModel>("SourceGroup").Delete(sourceId);
-        }
-
-        public void RemoveDestination(string destinationName)
-        {
-            using var db = new LiteDatabase(_connectionString);
-            var destinationId = db.GetCollection<DestinationModel>("DestinationGroup").FindOne(x => x.Name == destinationName).Id;
-            db.GetCollection<DestinationModel>("DestinationGroup").Delete(destinationId);
-        }
+    public void DeleteBackup(int id)
+    {
+        using var db = new LiteDatabase(_connectionString);
+        
+        var backup = db.GetCollection<BackupModel>("BackupPlans")
+            .FindOne(x => x.Id == id) ?? throw new Exception($"Backup not founded!");
+        
+        db.GetCollection<BackupModel>("BackupPlans").Delete(backup.Id);
     }
 }

@@ -1,212 +1,280 @@
 ﻿using CopyBackup.Data;
+using CopyBackup.Forms;
 using CopyBackup.Models;
-using Microsoft.VisualBasic.FileIO;
+using CopyBackup.Services;
 
-namespace CopyBackup
+using System.ComponentModel;
+
+namespace CopyBackup;
+
+public record BackupProcess
 {
-    public partial class FormMain : Form
+    public int FilesCopiedCount { get; set; }
+    public string FileCopiedName { get; set; } = string.Empty;
+}
+
+public partial class FormMain : Form
+{
+    private readonly BackgroundWorker _copyBackgroudWorker;
+
+    private readonly CopyService _copyService = new();
+    private readonly Database _database = new();
+    private BackupModel _selectedbackup = new();
+
+    public FormMain()
     {
-        private readonly Database _database = new();
-        private string _currentPath = string.Empty;
+        InitializeComponent();
+        _copyBackgroudWorker = new BackgroundWorker();
+        _copyBackgroudWorker.DoWork += new DoWorkEventHandler(RunCopyService);
+        _copyBackgroudWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(CopyServiceFinished);
+        _copyBackgroudWorker.ProgressChanged += new ProgressChangedEventHandler(CopyServiceProgressChannged);
+        _copyBackgroudWorker.WorkerReportsProgress = true;
+    }
 
-        public FormMain()
+    private void FormMain_Load(object sender, EventArgs e)
+    {
+        try
         {
-            InitializeComponent();
+            listBoxBackups.Items.AddRange(_database.GetBackups().ToArray());
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+
+    private void BtnAddBackup_Click(object sender, EventArgs e)
+    {
+        ResetUi();
+
+        var frmSetupBackup = new FormSetupBackup();
+        var frmSetupBackupDialogResult = frmSetupBackup.ShowDialog();
+        if (frmSetupBackupDialogResult != DialogResult.OK) return;
+
+        listBoxBackups.Items.Add(frmSetupBackup.SavedBackupName!);
+        listBoxBackups.SelectedItem = frmSetupBackup.SavedBackupName!;
+    }
+
+    private void BtnDeleteBackup_Click(object sender, EventArgs e)
+    {
+        if (listBoxBackups.SelectedItem is null ||
+            string.IsNullOrEmpty(listBoxBackups.SelectedItem.ToString()))
+            return;
+
+        ResetUi();
+
+        listBoxBackups.Items.RemoveAt(listBoxBackups.SelectedIndex);
+        listBoxDestinations.Items.Clear();
+        listView.Items.Clear();
+
+        try
+        {
+            _database.DeleteBackup(_selectedbackup.Id);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        private void FormMain_Load(object sender, EventArgs e)
+        _selectedbackup = new();
+    }
+
+    private void BtnEditBackup_Click(object sender, EventArgs e)
+    {
+        if (listBoxBackups.SelectedItem is null ||
+            string.IsNullOrEmpty(listBoxBackups.SelectedItem.ToString()))
+            return;
+
+        ResetUi();
+
+        var frmSetupBackup = new FormSetupBackup(_selectedbackup);
+        var frmSetupBackupDialogResult = frmSetupBackup.ShowDialog();
+        if (frmSetupBackupDialogResult != DialogResult.OK) return;
+
+        var savedBackupName = frmSetupBackup.SavedBackupName;
+        var listBoxItemIndex = listBoxBackups.Items.IndexOf(_selectedbackup.Name);
+
+        if (_selectedbackup.Name != savedBackupName)
+            listBoxBackups.Items[listBoxItemIndex] = savedBackupName!;
+        else
+            listBoxBackups.Items[listBoxItemIndex] = _selectedbackup.Name;
+    }
+
+    private void ListBoxBackups_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (listBoxBackups.SelectedItem is null ||
+            string.IsNullOrEmpty(listBoxBackups.SelectedItem.ToString()))
+            return;
+
+        ResetUi();
+
+        try
         {
-            var result = _database.GetSourcesName();
-            ListBoxSource.Items.AddRange(result.Item1.ToArray());
-            ListBoxDestination.Items.AddRange(result.Item2.ToArray());
+            _selectedbackup = _database.GetBackup(listBoxBackups.SelectedItem.ToString()!);
+            if (_selectedbackup is null)
+            {
+                MessageBox.Show("Selected backup not founded!",
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        private void ButtonAddSourceFolder_Click(object sender, EventArgs e)
+        listView.Items.Clear();
+        foreach (var item in _selectedbackup.Sources)
         {
-            var folderDialog = FolderBrowserDialog.ShowDialog();
-            if (folderDialog != DialogResult.OK) return;
+            listView.Items.Add(new ListViewItem
+            {
+                Text = item.Name,
+                Tag = item.Path,
+                ImageIndex = item.IsFile ? 0 : 1
+            });
+        }
 
+        listBoxDestinations.Items.Clear();
+        listBoxDestinations.Items.AddRange(_selectedbackup.Destinations.Select(x => x.Path).ToArray());
+    }
+
+    private void BtnRun_Click(object sender, EventArgs e)
+    {
+        if (listBoxBackups.SelectedItem is null || string.IsNullOrEmpty(listBoxBackups.SelectedItem.ToString()))
+            return;
+
+        toolStrip.Enabled = false;
+        listBoxBackups.Enabled = false;
+        lblStatus.ForeColor = Color.Navy;
+        lblStatus.Text = $"[{_selectedbackup.Name}] backup is in process . . .";
+        
+        _copyService.Backup = _selectedbackup;
+        progressBar.Maximum = _copyService.SourceFilesCount();
+        if (progressBar.Maximum == 0)
+        {
+            lblStatus.ForeColor = Color.Gray;
+            lblStatus.Text = $"[{_selectedbackup.Name}] has no archive file to backup . . .";
+            toolStrip.Enabled = true;
+            listBoxBackups.Enabled = true;
+            return;
+        }
+
+        _copyBackgroudWorker.RunWorkerAsync();
+    }
+
+    private void RunCopyService(object? sender, DoWorkEventArgs e)
+    {
+        Thread.Sleep(2000);
+        var destinationsPath = _selectedbackup.Destinations.Select(x => x.Path).ToList();
+        var lastDestination = destinationsPath.Last();
+
+        _copyService.FileCopiedName = string.Empty;
+        _copyService.FilesCopiedCount = 0;
+        _copyService.RemoveArchiveAttribute = false;
+
+        bool hasError = false;
+
+        foreach (var destinationPath in destinationsPath)
+        {
             try
             {
-                var selectedFolderName = Path.GetFileName(FolderBrowserDialog.SelectedPath);
-                if (string.IsNullOrEmpty(selectedFolderName)) return;
+                if (destinationPath == lastDestination)
+                    _copyService.RemoveArchiveAttribute = true;
 
-                ListBoxSource.Items.Add(selectedFolderName);
-                _database.AddSource(new SourceModel
+                if (Directory.Exists(destinationPath) == false)
+                    continue;
+
+                foreach (var source in _selectedbackup.Sources)
                 {
-                    Name = selectedFolderName,
-                    Path = FolderBrowserDialog.SelectedPath
-                });
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        private void ButtonRemoveSourceItem_Click(object sender, EventArgs e)
-        {
-            var selectedItem = ListBoxSource.SelectedItem.ToString();
-            ListBoxSource.Items.RemoveAt(ListBoxSource.SelectedIndex);
-
-            if (selectedItem == null) return;
-
-            _database.RemoveSource(selectedItem);
-            ListView.Items.Clear();
-        }
-
-        private void ButtonAddDestinationFolder_Click(object sender, EventArgs e)
-        {
-            var folderDialog = FolderBrowserDialog.ShowDialog();
-            if (folderDialog != DialogResult.OK) return;
-
-            var frmGetName = new FormGetName();
-            var frmNameDialogResult = frmGetName.ShowDialog();
-            if (frmNameDialogResult != DialogResult.OK) return;
-
-            try
-            {
-                ListBoxDestination.Items.Add(frmGetName.ItemName);
-                _database.AddDestination(new DestinationModel
-                {
-                    Name = frmGetName.ItemName,
-                    Path = FolderBrowserDialog.SelectedPath
-                });
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        private void ButtonRemoveDestinationItem_Click(object sender, EventArgs e)
-        {
-            var selectedItem = ListBoxDestination.SelectedItem.ToString();
-            ListBoxDestination.Items.RemoveAt(ListBoxDestination.SelectedIndex);
-
-            if (selectedItem == null) return;
-
-            _database.RemoveDestination(selectedItem);
-        }
-
-        private void ButtonUp_Click(object sender, EventArgs e)
-        {
-            if (!Directory.Exists(_currentPath)) return;
-
-            var directoryInfo = new DirectoryInfo(_currentPath).Parent;
-            if (directoryInfo == null) return;
-                
-            ExtractSubDirectories(directoryInfo.FullName);
-        }
-
-        private void ButtonRunCopy_Click(object sender, EventArgs e)
-        {
-            var sourceListPath = new List<string?>();
-            foreach (ListViewItem item in ListView.SelectedItems)
-                sourceListPath.Add(item.Tag.ToString());
-
-            var destinationList = new List<string?>();
-
-            foreach (var item in ListBoxDestination.SelectedItems)
-                destinationList.Add(item.ToString());
-
-            if(destinationList.Count == 0) return;
-
-            var destinationsPath = _database.GetDestinationsPath(destinationList);
-            try
-            {
-                foreach (var sourcePath in sourceListPath)
-                {
-                    foreach (var destinationPath in destinationsPath)
+                    try
                     {
-                        if (!Directory.Exists(destinationPath))
-                        {
-                            if (!string.IsNullOrEmpty(destinationPath)) Directory.CreateDirectory(destinationPath);
-                        }
+                        if (source.IsFile == false && Directory.Exists(source.Path) == true)
+                            _copyService.CopyDirectory(source.Path, destinationPath);
                         else
-                        {
-                            if (Directory.Exists(sourcePath))
-                            {
-                                var destinationPathTemp = Path.Combine(destinationPath, Path.GetFileName(sourcePath));
-                                if(!Directory.Exists(destinationPathTemp))
-                                    Directory.CreateDirectory(destinationPathTemp);
+                            _copyService.CopyFile(source.Path, destinationPath);
 
-                                FileSystem.CopyDirectory(sourcePath, destinationPathTemp, UIOption.AllDialogs);
-                            }
-                            else if (File.Exists(sourcePath))
+                        if(_copyService.FilesCopiedCount != 0 && !string.IsNullOrEmpty(_copyService.FileCopiedName))
+                        {
+                            _copyBackgroudWorker.ReportProgress(0, new BackupProcess
                             {
-                                FileSystem.CopyFile(
-                                    sourcePath,
-                                    Path.Combine(destinationPath, Path.GetFileName(sourcePath)),
-                                    UIOption.AllDialogs);
-                            }
+                                FilesCopiedCount = _copyService.FilesCopiedCount,
+                                FileCopiedName = _copyService.FileCopiedName
+                            });
+                            Thread.Sleep(500);
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        hasError = true;
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                hasError = true;
             }
         }
 
-        private void ListBoxSource_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (ListBoxSource.SelectedItem is null) return;
-
-            var selectedItem = ListBoxSource.SelectedItem.ToString();
-            if (selectedItem == null) return;
-
-            var sourcePath = _database.GetSourcePath(selectedItem);
-            if (string.IsNullOrEmpty(sourcePath)) return;
-
-            ExtractSubDirectories(sourcePath);
-        }
-
-        private void ListView_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            if (ListView.SelectedItems.Count != 1) return;
-            
-            var selectedItemPath = ListView.SelectedItems[0].Tag.ToString();
-            if (string.IsNullOrEmpty(selectedItemPath)) return;
-            
-            ExtractSubDirectories(selectedItemPath);
-        }
-
-        private void ExtractSubDirectories(string path)
-        {
-            if (!Directory.Exists(path)) return;
-
-            var directoryInfo = new DirectoryInfo(path);
-            ListView.Items.Clear();
-            try
+        if (hasError)
+            e.Result = "Backup finished with error(s)";
+        else
+            e.Result = new BackupProcess
             {
-                foreach (var directory in directoryInfo.GetDirectories())
-                {
-                    ListView.Items.Add(new ListViewItem
-                    {
-                        Text = directory.Name,
-                        Tag = directory.FullName,
-                        ImageIndex = 0
-                    });
-                }
+                FilesCopiedCount = _copyService.FilesCopiedCount,
+                FileCopiedName = _copyService.FileCopiedName
+            };
+    }
 
-                foreach (var file in directoryInfo.GetFiles())
-                {
-                    ListView.Items.Add(new ListViewItem
-                    {
-                        Text = file.Name,
-                        Tag = file.FullName,
-                        ImageIndex = 1
-                    });
-                }
+    private void CopyServiceFinished(object? sender, RunWorkerCompletedEventArgs e)
+    {
+        if (e.Result is null) return;
 
-                _currentPath = directoryInfo.FullName;
-            }
-            catch (Exception exception)
+        if (e.Result.GetType() == typeof(string))
+        {
+            lblStatus.ForeColor = Color.Red;
+            lblStatus.Text = $"[{_selectedbackup.Name}] backup is finished with some errors!";
+            progressBar.Value = progressBar.Maximum;
+            toolStrip.Enabled = true;
+            listBoxBackups.Enabled = true;
+        }
+        else if (e.Result is BackupProcess result)
+        {
+            lblStatus.ForeColor = Color.Black;
+            lblStatus.Text = result?.FileCopiedName;
+
+            if (result!.FilesCopiedCount <= progressBar.Maximum)
+                progressBar.Value = result!.FilesCopiedCount;
+
+            if (progressBar.Value == progressBar.Maximum)
             {
-                MessageBox.Show(exception.Message);
+                lblStatus.ForeColor = Color.Green;
+                lblStatus.Text = $"[{_selectedbackup.Name}] backup is finished successfully . . .";
+                toolStrip.Enabled = true;
+                listBoxBackups.Enabled = true;
             }
         }
+    }
+
+    private void CopyServiceProgressChannged(object? sender, ProgressChangedEventArgs e)
+    {
+        if (e.UserState is null) return;
+
+        var userState = (BackupProcess)e.UserState;
+        
+        lblStatus.Text = userState.FileCopiedName;
+
+        if (userState.FilesCopiedCount >= progressBar.Maximum)
+            progressBar.Value = progressBar.Maximum;
+        else
+            progressBar.Value = userState.FilesCopiedCount;
+    }
+
+    private void ResetUi()
+    {
+        lblStatus.ForeColor = Color.Black;
+        lblStatus.Text = string.Empty;
+        progressBar.Value = 0;
     }
 }
