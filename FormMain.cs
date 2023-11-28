@@ -172,26 +172,40 @@ public partial class FormMain : Form
         _copyService.FilesCopiedCount = 0;
         _copyService.RemoveArchiveAttribute = false;
 
-        bool hasError = false;
+        var hasError = false;
+        var isDestinationExist = false;
+        var notFoundDestinations = string.Empty;
 
         foreach (var destinationPath in destinationsPath)
         {
             try
             {
                 if (destinationPath == lastDestination)
+                { 
                     _copyService.RemoveArchiveAttribute = true;
+                }
 
                 if (Directory.Exists(destinationPath) == false)
-                    continue;
+                {
+
+                    notFoundDestinations += string.IsNullOrEmpty(notFoundDestinations) ?  $"{destinationPath} " : $"{destinationPath}, ";
+                    continue; 
+                }
+
+                isDestinationExist = true;
 
                 foreach (var source in _selectedbackup.Sources)
                 {
                     try
                     {
                         if (source.IsFile == false && Directory.Exists(source.Path) == true)
+                        {
                             _copyService.CopyDirectory(source.Path, destinationPath);
+                        }
                         else
+                        {
                             _copyService.CopyFile(source.Path, destinationPath);
+                        }
 
                         if(_copyService.FilesCopiedCount != 0 && !string.IsNullOrEmpty(_copyService.FileCopiedName))
                         {
@@ -218,13 +232,21 @@ public partial class FormMain : Form
         }
 
         if (hasError)
+        {
             e.Result = "Backup finished with error(s)";
+        }
+        else if (!isDestinationExist)
+        {
+            e.Result = $"Destination(s) not found: {notFoundDestinations}";
+        }
         else
+        {
             e.Result = new BackupProcess
             {
                 FilesCopiedCount = _copyService.FilesCopiedCount,
                 FileCopiedName = _copyService.FileCopiedName
             };
+        }
     }
 
     private void CopyServiceFinished(object? sender, RunWorkerCompletedEventArgs e)
@@ -234,7 +256,7 @@ public partial class FormMain : Form
         if (e.Result.GetType() == typeof(string))
         {
             lblStatus.ForeColor = Color.Red;
-            lblStatus.Text = $"[{_selectedbackup.Name}] backup is finished with some errors!";
+            lblStatus.Text = $"[{_selectedbackup.Name}] {e.Result}";
             progressBar.Value = progressBar.Maximum;
             toolStrip.Enabled = true;
             listBoxBackups.Enabled = true;

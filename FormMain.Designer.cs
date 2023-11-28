@@ -169,6 +169,7 @@
             // 
             // progressBar
             // 
+            progressBar.BackColor = SystemColors.Control;
             progressBar.Name = "progressBar";
             progressBar.Size = new Size(100, 17);
             // 

@@ -1,7 +1,5 @@
 ﻿using CopyBackup.Models;
 
-using System.Security.AccessControl;
-
 namespace CopyBackup.Services;
 
 internal class CopyService
