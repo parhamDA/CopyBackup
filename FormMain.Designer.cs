@@ -158,7 +158,7 @@
             lblStatus.BackColor = SystemColors.Control;
             lblStatus.ForeColor = Color.Navy;
             lblStatus.Name = "lblStatus";
-            lblStatus.Size = new Size(761, 18);
+            lblStatus.Size = new Size(792, 18);
             lblStatus.Spring = true;
             lblStatus.TextAlign = ContentAlignment.MiddleLeft;
             // 

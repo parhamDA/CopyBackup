@@ -6,11 +6,11 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
-    <ApplicationIcon>2188.ico</ApplicationIcon>
+    <ApplicationIcon>CopyBackupIcon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="2188.ico" />
+    <Content Include="CopyBackupIcon.ico" />
   </ItemGroup>
 
   <ItemGroup>
