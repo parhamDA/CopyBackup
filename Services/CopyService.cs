@@ -9,8 +9,6 @@ internal class CopyService
     public int FilesCopiedCount { get; set; }
     public bool RemoveArchiveAttribute { get; set; } = false;
 
-    
-
     public int SourceFilesCount()
     {
         // Total count is all source files for each destination path.

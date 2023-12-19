@@ -51,6 +51,8 @@
             groupBoxListView = new GroupBox();
             listView = new ListView();
             imageList = new ImageList(components);
+            notifyIcon = new NotifyIcon(components);
+            notifyIconContextMenu = new ContextMenuStrip(components);
             toolStrip.SuspendLayout();
             groupBoxDestinations.SuspendLayout();
             statusStrip.SuspendLayout();
@@ -270,6 +272,17 @@
             imageList.Images.SetKeyName(0, "File.png");
             imageList.Images.SetKeyName(1, "Folder.png");
             // 
+            // notifyIcon
+            // 
+            notifyIcon.ContextMenuStrip = notifyIconContextMenu;
+            notifyIcon.Icon = (Icon)resources.GetObject("notifyIcon.Icon");
+            notifyIcon.MouseDoubleClick += NotifyIcon_MouseDoubleClick;
+            // 
+            // notifyIconContextMenu
+            // 
+            notifyIconContextMenu.Name = "notifyIconContextMenu";
+            notifyIconContextMenu.Size = new Size(61, 4);
+            // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -286,6 +299,7 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Copy Backup";
             Load += FormMain_Load;
+            Resize += FormMain_Resize;
             toolStrip.ResumeLayout(false);
             toolStrip.PerformLayout();
             groupBoxDestinations.ResumeLayout(false);
@@ -326,5 +340,7 @@
         private ToolStripSeparator toolStripSeparator2;
         private ToolStripButton btnStopBackup;
         private ToolStripProgressBar progressBar;
+        private NotifyIcon notifyIcon;
+        private ContextMenuStrip notifyIconContextMenu;
     }
 }

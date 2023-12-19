@@ -17,6 +17,7 @@ public partial class FormMain : Form
 {
     private readonly BackgroundWorker _copyBackgroudWorker;
 
+    private List<string> _backupItems = [];
     private readonly CopyService _copyService = new();
     private readonly Database _database = new();
     private BackupModel _selectedbackup = new();
@@ -31,15 +32,68 @@ public partial class FormMain : Form
         _copyBackgroudWorker.WorkerReportsProgress = true;
     }
 
+    #region Events
     private void FormMain_Load(object sender, EventArgs e)
     {
         try
         {
-            listBoxBackups.Items.AddRange(_database.GetBackups().ToArray());
+            _backupItems.AddRange(_database.GetBackups().ToList());
+            listBoxBackups.Items.AddRange(_backupItems.ToArray());
         }
         catch (Exception ex)
         {
             MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+
+    private void FormMain_Resize(object sender, EventArgs e)
+    {
+        if (WindowState == FormWindowState.Minimized)
+        {
+            Hide();
+
+            foreach (var menuItem in from item in _backupItems
+                                     let menuItem = new ToolStripMenuItem
+                                     {
+                                         Text = item
+                                     }
+                                     select menuItem)
+            {
+                menuItem.Click += MenuItem_Click;
+                notifyIconContextMenu.Items.Add(menuItem);
+            }
+
+            notifyIcon.Visible = true;
+        }
+    }
+
+    private void NotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
+    {
+        Show();
+        WindowState = FormWindowState.Normal;
+        notifyIcon.Visible = false;
+    }
+
+    private void MenuItem_Click(object? sender, EventArgs e)
+    {
+        if (sender is null)
+        {
+            notifyIcon.ShowBalloonTip(7000, "Error!", "There is an isuue to run backup", ToolTipIcon.Error);
+        }
+        else
+        {
+            notifyIcon.ShowBalloonTip(7000, "‌Backup Running!", $"[{sender}] backup is in process ...", ToolTipIcon.Info);
+
+            var posibleErrorMessage = GetSelectedBackup(sender.ToString()!);
+            if (string.IsNullOrEmpty(posibleErrorMessage))
+            {
+                _copyService.Backup = _selectedbackup;
+                _copyBackgroudWorker.RunWorkerAsync();
+            }
+            else
+            {
+                notifyIcon.ShowBalloonTip(7000, "‌Error!", posibleErrorMessage, ToolTipIcon.Error);
+            }
         }
     }
 
@@ -49,19 +103,23 @@ public partial class FormMain : Form
 
         var frmSetupBackup = new FormSetupBackup();
         var frmSetupBackupDialogResult = frmSetupBackup.ShowDialog();
-        if (frmSetupBackupDialogResult != DialogResult.OK) return;
+        if (frmSetupBackupDialogResult != DialogResult.OK) { return; }
 
         listBoxBackups.Items.Add(frmSetupBackup.SavedBackupName!);
         listBoxBackups.SelectedItem = frmSetupBackup.SavedBackupName!;
+        
+        _backupItems.Add(frmSetupBackup.SavedBackupName!);
     }
 
     private void BtnDeleteBackup_Click(object sender, EventArgs e)
     {
         if (listBoxBackups.SelectedItem is null ||
             string.IsNullOrEmpty(listBoxBackups.SelectedItem.ToString()))
-            return;
+        { return; }
 
         ResetUi();
+
+        _backupItems.Remove(listBoxBackups.SelectedItem.ToString()!);
 
         listBoxBackups.Items.RemoveAt(listBoxBackups.SelectedIndex);
         listBoxDestinations.Items.Clear();
@@ -89,38 +147,60 @@ public partial class FormMain : Form
 
         var frmSetupBackup = new FormSetupBackup(_selectedbackup);
         var frmSetupBackupDialogResult = frmSetupBackup.ShowDialog();
-        if (frmSetupBackupDialogResult != DialogResult.OK) return;
+        if (frmSetupBackupDialogResult != DialogResult.OK) { return; }
 
         var savedBackupName = frmSetupBackup.SavedBackupName;
         var listBoxItemIndex = listBoxBackups.Items.IndexOf(_selectedbackup.Name);
 
         if (_selectedbackup.Name != savedBackupName)
+        {
             listBoxBackups.Items[listBoxItemIndex] = savedBackupName!;
+            _backupItems[listBoxItemIndex] = savedBackupName!;
+        }
         else
+        {
             listBoxBackups.Items[listBoxItemIndex] = _selectedbackup.Name;
+            _backupItems[listBoxItemIndex] = _selectedbackup.Name;
+        }
+    }
+
+    private void BtnRun_Click(object sender, EventArgs e)
+    {
+        if (listBoxBackups.SelectedItem is null || string.IsNullOrEmpty(listBoxBackups.SelectedItem.ToString()))
+        { return; }
+
+        toolStrip.Enabled = false;
+        listBoxBackups.Enabled = false;
+        lblStatus.ForeColor = Color.Navy;
+        lblStatus.Text = $"[{_selectedbackup.Name}] backup is in process . . .";
+
+        _copyService.Backup = _selectedbackup;
+        progressBar.Maximum = _copyService.SourceFilesCount();
+        if (progressBar.Maximum == 0)
+        {
+            lblStatus.ForeColor = Color.Gray;
+            lblStatus.Text = $"[{_selectedbackup.Name}] has no archive file to backup . . .";
+            toolStrip.Enabled = true;
+            listBoxBackups.Enabled = true;
+            return;
+        }
+
+        _copyBackgroudWorker.RunWorkerAsync();
     }
 
     private void ListBoxBackups_SelectedIndexChanged(object sender, EventArgs e)
     {
         if (listBoxBackups.SelectedItem is null ||
             string.IsNullOrEmpty(listBoxBackups.SelectedItem.ToString()))
-            return;
+        { return; }
 
         ResetUi();
 
-        try
+        var posibleErrorMessage = GetSelectedBackup(listBoxBackups.SelectedItem.ToString()!);
+        if (!string.IsNullOrEmpty(posibleErrorMessage))
         {
-            _selectedbackup = _database.GetBackup(listBoxBackups.SelectedItem.ToString()!);
-            if (_selectedbackup is null)
-            {
-                MessageBox.Show("Selected backup not founded!",
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(posibleErrorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
         }
 
         listView.Items.Clear();
@@ -137,31 +217,9 @@ public partial class FormMain : Form
         listBoxDestinations.Items.Clear();
         listBoxDestinations.Items.AddRange(_selectedbackup.Destinations.Select(x => x.Path).ToArray());
     }
+    #endregion
 
-    private void BtnRun_Click(object sender, EventArgs e)
-    {
-        if (listBoxBackups.SelectedItem is null || string.IsNullOrEmpty(listBoxBackups.SelectedItem.ToString()))
-            return;
-
-        toolStrip.Enabled = false;
-        listBoxBackups.Enabled = false;
-        lblStatus.ForeColor = Color.Navy;
-        lblStatus.Text = $"[{_selectedbackup.Name}] backup is in process . . .";
-        
-        _copyService.Backup = _selectedbackup;
-        progressBar.Maximum = _copyService.SourceFilesCount();
-        if (progressBar.Maximum == 0)
-        {
-            lblStatus.ForeColor = Color.Gray;
-            lblStatus.Text = $"[{_selectedbackup.Name}] has no archive file to backup . . .";
-            toolStrip.Enabled = true;
-            listBoxBackups.Enabled = true;
-            return;
-        }
-
-        _copyBackgroudWorker.RunWorkerAsync();
-    }
-
+    #region BackgroundWorkerEvents
     private void RunCopyService(object? sender, DoWorkEventArgs e)
     {
         Thread.Sleep(2000);
@@ -181,15 +239,15 @@ public partial class FormMain : Form
             try
             {
                 if (destinationPath == lastDestination)
-                { 
+                {
                     _copyService.RemoveArchiveAttribute = true;
                 }
 
                 if (Directory.Exists(destinationPath) == false)
                 {
 
-                    notFoundDestinations += string.IsNullOrEmpty(notFoundDestinations) ?  $"{destinationPath} " : $"{destinationPath}, ";
-                    continue; 
+                    notFoundDestinations += string.IsNullOrEmpty(notFoundDestinations) ? $"{destinationPath} " : $"{destinationPath}, ";
+                    continue;
                 }
 
                 isDestinationExist = true;
@@ -207,7 +265,7 @@ public partial class FormMain : Form
                             _copyService.CopyFile(source.Path, destinationPath);
                         }
 
-                        if(_copyService.FilesCopiedCount != 0 && !string.IsNullOrEmpty(_copyService.FileCopiedName))
+                        if (_copyService.FilesCopiedCount != 0 && !string.IsNullOrEmpty(_copyService.FileCopiedName))
                         {
                             _copyBackgroudWorker.ReportProgress(0, new BackupProcess
                             {
@@ -255,26 +313,40 @@ public partial class FormMain : Form
 
         if (e.Result.GetType() == typeof(string))
         {
-            lblStatus.ForeColor = Color.Red;
-            lblStatus.Text = $"[{_selectedbackup.Name}] {e.Result}";
-            progressBar.Value = progressBar.Maximum;
-            toolStrip.Enabled = true;
-            listBoxBackups.Enabled = true;
+            if(notifyIcon.Visible)
+            {
+                notifyIcon.ShowBalloonTip(7000, "‌Error!", $"[{_selectedbackup.Name}] {e.Result}", ToolTipIcon.Error);
+            }
+            else
+            {
+                lblStatus.ForeColor = Color.Red;
+                lblStatus.Text = $"[{_selectedbackup.Name}] {e.Result}";
+                progressBar.Value = progressBar.Maximum;
+                toolStrip.Enabled = true;
+                listBoxBackups.Enabled = true;
+            }
         }
         else if (e.Result is BackupProcess result)
         {
-            lblStatus.ForeColor = Color.Black;
-            lblStatus.Text = result?.FileCopiedName;
-
-            if (result!.FilesCopiedCount <= progressBar.Maximum)
-                progressBar.Value = result!.FilesCopiedCount;
-
-            if (progressBar.Value == progressBar.Maximum)
+            if (notifyIcon.Visible)
             {
-                lblStatus.ForeColor = Color.Green;
-                lblStatus.Text = $"[{_selectedbackup.Name}] backup is finished successfully . . .";
-                toolStrip.Enabled = true;
-                listBoxBackups.Enabled = true;
+                notifyIcon.ShowBalloonTip(7000, "‌Info", $"[{_selectedbackup.Name}] backup is finished successfully . . .", ToolTipIcon.Info);
+            }
+            else
+            {
+                lblStatus.ForeColor = Color.Black;
+                lblStatus.Text = result?.FileCopiedName;
+
+                if (result!.FilesCopiedCount <= progressBar.Maximum)
+                { progressBar.Value = result!.FilesCopiedCount; }
+
+                if (progressBar.Value == progressBar.Maximum)
+                {
+                    lblStatus.ForeColor = Color.Green;
+                    lblStatus.Text = $"[{_selectedbackup.Name}] backup is finished successfully . . .";
+                    toolStrip.Enabled = true;
+                    listBoxBackups.Enabled = true;
+                }
             }
         }
     }
@@ -284,7 +356,7 @@ public partial class FormMain : Form
         if (e.UserState is null) return;
 
         var userState = (BackupProcess)e.UserState;
-        
+
         lblStatus.Text = userState.FileCopiedName;
 
         if (userState.FilesCopiedCount >= progressBar.Maximum)
@@ -292,11 +364,31 @@ public partial class FormMain : Form
         else
             progressBar.Value = userState.FilesCopiedCount;
     }
+    #endregion
 
+    #region HelperMethods
     private void ResetUi()
     {
         lblStatus.ForeColor = Color.Black;
         lblStatus.Text = string.Empty;
         progressBar.Value = 0;
     }
+
+    private string GetSelectedBackup(string selectedBackup)
+    {
+        try
+        {
+            _selectedbackup = _database.GetBackup(selectedBackup);
+            if (_selectedbackup is null)
+            { return "Selected backup is not exist!"; }
+
+            return string.Empty;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return ex.Message;
+        }
+    }
+    #endregion
 }
