@@ -17,7 +17,7 @@ public partial class FormMain : Form
 {
     private readonly BackgroundWorker _copyBackgroudWorker;
 
-    private List<string> _backupItems = [];
+    private readonly List<string> _backupItems = [];
     private readonly CopyService _copyService = new();
     private readonly Database _database = new();
     private BackupModel _selectedbackup = new();
