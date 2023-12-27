@@ -52,6 +52,8 @@ public partial class FormMain : Form
         {
             Hide();
 
+            notifyIconContextMenu.Items.Clear();
+
             foreach (var menuItem in from item in _backupItems
                                      let menuItem = new ToolStripMenuItem
                                      {
