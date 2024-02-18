@@ -6,14 +6,20 @@ namespace CopyBackup.Data;
 
 public class Database
 {
-    private readonly ConnectionString _connectionString;
-    
-    public Database()
+    private ConnectionString? _connectionString;
+
+    public string ConnectionString
     {
-        _connectionString = new ConnectionString
+        set
         {
-            Filename = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CopyBackupDatabase.db")
-        };
+            if (string.IsNullOrEmpty(value))
+                throw new ArgumentNullException(nameof(value));
+
+            _connectionString = new ConnectionString
+            {
+                Filename = value
+            };
+        }
     }
 
     public IEnumerable<string> GetBackups()
@@ -56,8 +62,8 @@ public class Database
         var backup = backups.FindOne(x => x.Id == editedBackup.Id)
             ?? throw new Exception($"Backup {editedBackup.Name} not founded!");
 
-        if(backup.Name.ToLower() != editedBackup.Name.ToLower())
-            if(backups.FindOne(x=>x.Name.ToLower() == editedBackup.Name.ToLower()) is not null)
+        if (backup.Name.ToLower() != editedBackup.Name.ToLower())
+            if (backups.FindOne(x => x.Name.ToLower() == editedBackup.Name.ToLower()) is not null)
                 throw new Exception("Back name is already exist!");
 
         backup.Name = editedBackup.Name;
@@ -70,10 +76,10 @@ public class Database
     public void DeleteBackup(int id)
     {
         using var db = new LiteDatabase(_connectionString);
-        
+
         var backup = db.GetCollection<BackupModel>("BackupPlans")
             .FindOne(x => x.Id == id) ?? throw new Exception($"Backup not founded!");
-        
+
         db.GetCollection<BackupModel>("BackupPlans").Delete(backup.Id);
     }
 }

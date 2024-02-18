@@ -20,6 +20,8 @@ public partial class FormMain : Form
     private readonly List<string> _backupItems = [];
     private readonly CopyService _copyService = new();
     private readonly Database _database = new();
+
+    private ApplicationSettings _applicationSettings = new();
     private BackupModel _selectedbackup = new();
 
     public FormMain()
@@ -33,18 +35,9 @@ public partial class FormMain : Form
     }
 
     #region Events
-    private void FormMain_Load(object sender, EventArgs e)
-    {
-        try
-        {
-            _backupItems.AddRange(_database.GetBackups().ToList());
-            listBoxBackups.Items.AddRange(_backupItems.ToArray());
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-    }
+    private void FormMain_Load(object sender, EventArgs e) => GetBackupItems(); 
+
+    private void FormMain_FormClosing(object sender, FormClosingEventArgs e) => _applicationSettings.Save();
 
     private void FormMain_Resize(object sender, EventArgs e)
     {
@@ -99,6 +92,16 @@ public partial class FormMain : Form
         }
     }
 
+    private void BtnOpenDatabase_Click(object sender, EventArgs e)
+    {
+        var fileDialog = openFileDialog.ShowDialog();
+        if (fileDialog != DialogResult.OK) return;
+
+        _applicationSettings.ConnectionString = openFileDialog.FileName;
+
+        GetBackupItems();
+    }
+
     private void BtnAddBackup_Click(object sender, EventArgs e)
     {
         ResetUi();
@@ -109,7 +112,7 @@ public partial class FormMain : Form
 
         listBoxBackups.Items.Add(frmSetupBackup.SavedBackupName!);
         listBoxBackups.SelectedItem = frmSetupBackup.SavedBackupName!;
-        
+
         _backupItems.Add(frmSetupBackup.SavedBackupName!);
     }
 
@@ -315,7 +318,7 @@ public partial class FormMain : Form
 
         if (e.Result.GetType() == typeof(string))
         {
-            if(notifyIcon.Visible)
+            if (notifyIcon.Visible)
             {
                 notifyIcon.ShowBalloonTip(7000, "‌Error!", $"[{_selectedbackup.Name}] {e.Result}", ToolTipIcon.Error);
             }
@@ -376,6 +379,21 @@ public partial class FormMain : Form
         progressBar.Value = 0;
     }
 
+    private void GetBackupItems()
+    {
+        try
+        {
+            _database.ConnectionString = _applicationSettings.ConnectionString;
+            _backupItems.AddRange(_database.GetBackups().ToList());
+            listBoxBackups.Items.AddRange(_backupItems.ToArray());
+        }
+        catch (ArgumentNullException) { }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+
     private string GetSelectedBackup(string selectedBackup)
     {
         try
@@ -392,5 +410,6 @@ public partial class FormMain : Form
             return ex.Message;
         }
     }
+
     #endregion
 }

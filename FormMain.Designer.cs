@@ -31,6 +31,7 @@
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             toolStrip = new ToolStrip();
+            btnOpenDatabase = new ToolStripButton();
             btnAddBackup = new ToolStripButton();
             btnDeleteBackup = new ToolStripButton();
             btnEditBackup = new ToolStripButton();
@@ -53,6 +54,7 @@
             imageList = new ImageList(components);
             notifyIcon = new NotifyIcon(components);
             notifyIconContextMenu = new ContextMenuStrip(components);
+            openFileDialog = new OpenFileDialog();
             toolStrip.SuspendLayout();
             groupBoxDestinations.SuspendLayout();
             statusStrip.SuspendLayout();
@@ -68,12 +70,22 @@
             // 
             // toolStrip
             // 
-            toolStrip.Items.AddRange(new ToolStripItem[] { btnAddBackup, btnDeleteBackup, btnEditBackup, toolStripSeparator1, btnRun });
+            toolStrip.Items.AddRange(new ToolStripItem[] { btnOpenDatabase, btnAddBackup, btnDeleteBackup, btnEditBackup, toolStripSeparator1, btnRun });
             toolStrip.Location = new Point(0, 0);
             toolStrip.Name = "toolStrip";
             toolStrip.Size = new Size(938, 25);
             toolStrip.TabIndex = 0;
             toolStrip.Text = "Run Backup";
+            // 
+            // btnOpenDatabase
+            // 
+            btnOpenDatabase.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            btnOpenDatabase.Image = Properties.Resources.open_database;
+            btnOpenDatabase.ImageTransparentColor = Color.Magenta;
+            btnOpenDatabase.Name = "btnOpenDatabase";
+            btnOpenDatabase.Size = new Size(23, 22);
+            btnOpenDatabase.Text = "Open Database";
+            btnOpenDatabase.Click += BtnOpenDatabase_Click;
             // 
             // btnAddBackup
             // 
@@ -283,6 +295,11 @@
             notifyIconContextMenu.Name = "notifyIconContextMenu";
             notifyIconContextMenu.Size = new Size(61, 4);
             // 
+            // openFileDialog
+            // 
+            openFileDialog.ReadOnlyChecked = true;
+            openFileDialog.SelectReadOnly = false;
+            // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -298,6 +315,7 @@
             SizeGripStyle = SizeGripStyle.Hide;
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Copy Backup";
+            FormClosing += FormMain_FormClosing;
             Load += FormMain_Load;
             Resize += FormMain_Resize;
             toolStrip.ResumeLayout(false);
@@ -342,5 +360,7 @@
         private ToolStripProgressBar progressBar;
         private NotifyIcon notifyIcon;
         private ContextMenuStrip notifyIconContextMenu;
+        private ToolStripButton btnOpenDatabase;
+        private OpenFileDialog openFileDialog;
     }
 }
