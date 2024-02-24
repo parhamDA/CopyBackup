@@ -21,7 +21,7 @@ public partial class FormMain : Form
     private readonly CopyService _copyService = new();
     private readonly Database _database = new();
 
-    private ApplicationSettings _applicationSettings = new();
+    private readonly ApplicationSettings _applicationSettings = new();
     private BackupModel _selectedbackup = new();
 
     public FormMain()

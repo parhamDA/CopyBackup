@@ -1,14 +1,16 @@
 ﻿using CopyBackup.Data;
 using CopyBackup.Models;
+using CopyBackup.Services;
 
 namespace CopyBackup.Forms;
 
 public partial class FormSetupBackup : Form
 {
     private readonly Database _database = new();
+    private readonly ApplicationSettings _applicationSettings = new();
 
-    private readonly List<SourceModel> _sources = new();
-    private readonly List<DestinationModel> _destinations = new();
+    private readonly List<SourceModel> _sources = [];
+    private readonly List<DestinationModel> _destinations = [];
 
     private readonly bool _isUpdate = false;
     private readonly int _editBackupId;
@@ -19,12 +21,16 @@ public partial class FormSetupBackup : Form
     public FormSetupBackup()
     {
         InitializeComponent();
+        
+        _database.ConnectionString = _applicationSettings.ConnectionString;
     }
 
     public FormSetupBackup(BackupModel backup)
     {
         InitializeComponent();
-        
+
+        _database.ConnectionString = _applicationSettings.ConnectionString;
+
         Text = "Edit Backup";
 
         _sources.AddRange(backup.Sources);
